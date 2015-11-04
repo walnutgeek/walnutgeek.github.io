@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>tables.swipetoggle.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="DataFrame.html">
+                  DataFrame.js
+                </a>
+              
+                
+                <a class="source" href="tables-init.html">
+                  tables-init.js
+                </a>
+              
+                
+                <a class="source" href="tables.btnmarkup.html">
+                  tables.btnmarkup.js
+                </a>
+              
+                
+                <a class="source" href="tables.columntoggle.html">
+                  tables.columntoggle.js
+                </a>
+              
+                
+                <a class="source" href="tables.html">
+                  tables.js
+                </a>
+              
+                
+                <a class="source" href="tables.minimap.html">
+                  tables.minimap.js
+                </a>
+              
+                
+                <a class="source" href="tables.modeswitch.html">
+                  tables.modeswitch.js
+                </a>
+              
+                
+                <a class="source" href="tables.sortable.html">
+                  tables.sortable.js
+                </a>
+              
+                
+                <a class="source" href="tables.stack.html">
+                  tables.stack.js
+                </a>
+              
+                
+                <a class="source" href="tables.swipetoggle.html">
+                  tables.swipetoggle.js
+                </a>
+              
+                
+                <a class="source" href="types.html">
+                  types.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+                
+                <a class="source" href="ux.html">
+                  ux.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>tables.swipetoggle.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*
+* tablesaw: A set of plugins for responsive tables
+* Swipe Toggle: swipe gesture (or buttons) to navigate which columns are shown.
+* Copyright (c) 2013 Filament Group, Inc.
+* MIT License
+*/</span>
+
+;(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> win, $, undefined </span>)</span>{
+
+	$.extend( Tablesaw.config, {
+		swipe: {
+			horizontalThreshold: <span class="hljs-number">15</span>,
+			verticalThreshold: <span class="hljs-number">30</span>
+		}
+	});
+
+	<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isIE8</span>(<span class="hljs-params"></span>) </span>{
+		<span class="hljs-keyword">var</span> div = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'div'</span>),
+			all = div.getElementsByTagName(<span class="hljs-string">'i'</span>);
+
+		div.innerHTML = <span class="hljs-string">'&lt;!--[if lte IE 8]&gt;&lt;i&gt;&lt;/i&gt;&lt;![endif]--&gt;'</span>;
+
+		<span class="hljs-keyword">return</span> !!all.length;
+	}
+
+	<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createSwipeTable</span>(<span class="hljs-params"> $table </span>)</span>{
+
+		<span class="hljs-keyword">var</span> $btns = $( <span class="hljs-string">"&lt;div class='tablesaw-advance'&gt;&lt;/div&gt;"</span> ),
+			$prevBtn = $( <span class="hljs-string">"&lt;a href='#' class='tablesaw-nav-btn btn btn-micro left' title='Previous Column'&gt;&lt;/a&gt;"</span> ).appendTo( $btns ),
+			$nextBtn = $( <span class="hljs-string">"&lt;a href='#' class='tablesaw-nav-btn btn btn-micro right' title='Next Column'&gt;&lt;/a&gt;"</span> ).appendTo( $btns ),
+			hideBtn = <span class="hljs-string">'disabled'</span>,
+			persistWidths = <span class="hljs-string">'tablesaw-fix-persist'</span>,
+			$headerCells = $table.find( <span class="hljs-string">"thead th"</span> ),
+			$headerCellsNoPersist = $headerCells.not( <span class="hljs-string">'[data-tablesaw-priority="persist"]'</span> ),
+			headerWidths = [],
+			$head = $( <span class="hljs-built_in">document</span>.head || <span class="hljs-string">'head'</span> ),
+			tableId = $table.attr( <span class="hljs-string">'id'</span> ),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>TODO switch this to an nth-child feature test</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			supportsNthChild = !isIE8();
+
+		<span class="hljs-keyword">if</span>( !$headerCells.length ) {
+			<span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>( <span class="hljs-string">"tablesaw swipe: no header cells found. Are you using &lt;th&gt; inside of &lt;thead&gt;?"</span> );
+		}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Calculate initial widths</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		$table.css(<span class="hljs-string">'width'</span>, <span class="hljs-string">'auto'</span>);
+		$headerCells.each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+			headerWidths.push( $( <span class="hljs-keyword">this</span> ).outerWidth() );
+		});
+		$table.css( <span class="hljs-string">'width'</span>, <span class="hljs-string">''</span> );
+
+		$btns.appendTo( $table.prev( <span class="hljs-string">'.tablesaw-bar'</span> ) );
+
+		$table.addClass( <span class="hljs-string">"tablesaw-swipe"</span> );
+
+		<span class="hljs-keyword">if</span>( !tableId ) {
+			tableId = <span class="hljs-string">'tableswipe-'</span> + <span class="hljs-built_in">Math</span>.round( <span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">10000</span> );
+			$table.attr( <span class="hljs-string">'id'</span>, tableId );
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">$getCells</span>(<span class="hljs-params"> headerCell </span>) </span>{
+			<span class="hljs-keyword">return</span> $( headerCell.cells ).add( headerCell );
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">showColumn</span>(<span class="hljs-params"> headerCell </span>) </span>{
+			$getCells( headerCell ).removeClass( <span class="hljs-string">'tablesaw-cell-hidden'</span> );
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">hideColumn</span>(<span class="hljs-params"> headerCell </span>) </span>{
+			$getCells( headerCell ).addClass( <span class="hljs-string">'tablesaw-cell-hidden'</span> );
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">persistColumn</span>(<span class="hljs-params"> headerCell </span>) </span>{
+			$getCells( headerCell ).addClass( <span class="hljs-string">'tablesaw-cell-persist'</span> );
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isPersistent</span>(<span class="hljs-params"> headerCell </span>) </span>{
+			<span class="hljs-keyword">return</span> $( headerCell ).is( <span class="hljs-string">'[data-tablesaw-priority="persist"]'</span> );
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">unmaintainWidths</span>(<span class="hljs-params"></span>) </span>{
+			$table.removeClass( persistWidths );
+			$( <span class="hljs-string">'#'</span> + tableId + <span class="hljs-string">'-persist'</span> ).remove();
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">maintainWidths</span>(<span class="hljs-params"></span>) </span>{
+			<span class="hljs-keyword">var</span> prefix = <span class="hljs-string">'#'</span> + tableId + <span class="hljs-string">'.tablesaw-swipe '</span>,
+				styles = [],
+				tableWidth = $table.width(),
+				hash = [],
+				newHash;
+
+			$headerCells.each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> index </span>) </span>{
+				<span class="hljs-keyword">var</span> width;
+				<span class="hljs-keyword">if</span>( isPersistent( <span class="hljs-keyword">this</span> ) ) {
+					width = $( <span class="hljs-keyword">this</span> ).outerWidth();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Only save width on non-greedy columns (take up less than 75% of table width)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">if</span>( width &lt; tableWidth * <span class="hljs-number">0.75</span> ) {
+						hash.push( index + <span class="hljs-string">'-'</span> + width );
+						styles.push( prefix + <span class="hljs-string">' .tablesaw-cell-persist:nth-child('</span> + ( index + <span class="hljs-number">1</span> ) + <span class="hljs-string">') { width: '</span> + width + <span class="hljs-string">'px; }'</span> );
+					}
+				}
+			});
+			newHash = hash.join( <span class="hljs-string">'_'</span> );
+
+			$table.addClass( persistWidths );
+
+			<span class="hljs-keyword">var</span> $style = $( <span class="hljs-string">'#'</span> + tableId + <span class="hljs-string">'-persist'</span> );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>If style element not yet added OR if the widths have changed</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">if</span>( !$style.length || $style.data( <span class="hljs-string">'hash'</span> ) !== newHash ) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Remove existing</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				$style.remove();
+
+				<span class="hljs-keyword">if</span>( styles.length ) {
+					$( <span class="hljs-string">'&lt;style&gt;'</span> + styles.join( <span class="hljs-string">"\n"</span> ) + <span class="hljs-string">'&lt;/style&gt;'</span> )
+						.attr( <span class="hljs-string">'id'</span>, tableId + <span class="hljs-string">'-persist'</span> )
+						.data( <span class="hljs-string">'hash'</span>, newHash )
+						.appendTo( $head );
+				}
+			}
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getNext</span>(<span class="hljs-params"></span>)</span>{
+			<span class="hljs-keyword">var</span> next = [],
+				checkFound;
+
+			$headerCellsNoPersist.each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> i </span>) </span>{
+				<span class="hljs-keyword">var</span> $t = $( <span class="hljs-keyword">this</span> ),
+					isHidden = $t.css( <span class="hljs-string">"display"</span> ) === <span class="hljs-string">"none"</span> || $t.is( <span class="hljs-string">".tablesaw-cell-hidden"</span> );
+
+				<span class="hljs-keyword">if</span>( !isHidden &amp;&amp; !checkFound ) {
+					checkFound = <span class="hljs-literal">true</span>;
+					next[ <span class="hljs-number">0</span> ] = i;
+				} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>( isHidden &amp;&amp; checkFound ) {
+					next[ <span class="hljs-number">1</span> ] = i;
+
+					<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+				}
+			});
+
+			<span class="hljs-keyword">return</span> next;
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getPrev</span>(<span class="hljs-params"></span>)</span>{
+			<span class="hljs-keyword">var</span> next = getNext();
+			<span class="hljs-keyword">return</span> [ next[ <span class="hljs-number">1</span> ] - <span class="hljs-number">1</span> , next[ <span class="hljs-number">0</span> ] - <span class="hljs-number">1</span> ];
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">nextpair</span>(<span class="hljs-params"> fwd </span>)</span>{
+			<span class="hljs-keyword">return</span> fwd ? getNext() : getPrev();
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">canAdvance</span>(<span class="hljs-params"> pair </span>)</span>{
+			<span class="hljs-keyword">return</span> pair[ <span class="hljs-number">1</span> ] &gt; -<span class="hljs-number">1</span> &amp;&amp; pair[ <span class="hljs-number">1</span> ] &lt; $headerCellsNoPersist.length;
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">matchesMedia</span>(<span class="hljs-params"></span>) </span>{
+			<span class="hljs-keyword">var</span> matchMedia = $table.attr( <span class="hljs-string">"data-tablesaw-swipe-media"</span> );
+			<span class="hljs-keyword">return</span> !matchMedia || ( <span class="hljs-string">"matchMedia"</span> <span class="hljs-keyword">in</span> win ) &amp;&amp; win.matchMedia( matchMedia ).matches;
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fakeBreakpoints</span>(<span class="hljs-params"></span>) </span>{
+			<span class="hljs-keyword">if</span>( !matchesMedia() ) {
+				<span class="hljs-keyword">return</span>;
+			}
+
+			<span class="hljs-keyword">var</span> extraPaddingPixels = <span class="hljs-number">20</span>,
+				containerWidth = $table.parent().width(),
+				persist = [],
+				sum = <span class="hljs-number">0</span>,
+				sums = [],
+				visibleNonPersistantCount = $headerCells.length;
+
+			$headerCells.each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> index </span>) </span>{
+				<span class="hljs-keyword">var</span> $t = $( <span class="hljs-keyword">this</span> ),
+					isPersist = $t.is( <span class="hljs-string">'[data-tablesaw-priority="persist"]'</span> );
+
+				persist.push( isPersist );
+
+				sum += headerWidths[ index ] + ( isPersist ? <span class="hljs-number">0</span> : extraPaddingPixels );
+				sums.push( sum );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>is persistent or is hidden</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="hljs-keyword">if</span>( isPersist || sum &gt; containerWidth ) {
+					visibleNonPersistantCount--;
+				}
+			});
+
+			<span class="hljs-keyword">var</span> needsNonPersistentColumn = visibleNonPersistantCount === <span class="hljs-number">0</span>;
+
+			$headerCells.each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> index </span>) </span>{
+				<span class="hljs-keyword">if</span>( persist[ index ] ) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>for visual box-shadow</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					persistColumn( <span class="hljs-keyword">this</span> );
+					<span class="hljs-keyword">return</span>;
+				}
+
+				<span class="hljs-keyword">if</span>( sums[ index ] &lt;= containerWidth || needsNonPersistentColumn ) {
+					needsNonPersistentColumn = <span class="hljs-literal">false</span>;
+					showColumn( <span class="hljs-keyword">this</span> );
+				} <span class="hljs-keyword">else</span> {
+					hideColumn( <span class="hljs-keyword">this</span> );
+				}
+			});
+
+			<span class="hljs-keyword">if</span>( supportsNthChild ) {
+				unmaintainWidths();
+			}
+			$table.trigger( <span class="hljs-string">'tablesawcolumns'</span> );
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">advance</span>(<span class="hljs-params"> fwd </span>)</span>{
+			<span class="hljs-keyword">var</span> pair = nextpair( fwd );
+			<span class="hljs-keyword">if</span>( canAdvance( pair ) ){
+				<span class="hljs-keyword">if</span>( <span class="hljs-built_in">isNaN</span>( pair[ <span class="hljs-number">0</span> ] ) ){
+					<span class="hljs-keyword">if</span>( fwd ){
+						pair[<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>;
+					}
+					<span class="hljs-keyword">else</span> {
+						pair[<span class="hljs-number">0</span>] = $headerCellsNoPersist.length - <span class="hljs-number">1</span>;
+					}
+				}
+
+				<span class="hljs-keyword">if</span>( supportsNthChild ) {
+					maintainWidths();
+				}
+
+				hideColumn( $headerCellsNoPersist.get( pair[ <span class="hljs-number">0</span> ] ) );
+				showColumn( $headerCellsNoPersist.get( pair[ <span class="hljs-number">1</span> ] ) );
+
+				$table.trigger( <span class="hljs-string">'tablesawcolumns'</span> );
+			}
+		}
+
+		$prevBtn.add( $nextBtn ).click(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> e </span>)</span>{
+			advance( !!$( e.target ).closest( $nextBtn ).length );
+			e.preventDefault();
+		});
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getCoord</span>(<span class="hljs-params"> event, key </span>) </span>{
+			<span class="hljs-keyword">return</span> ( event.touches || event.originalEvent.touches )[ <span class="hljs-number">0</span> ][ key ];
+		}
+
+		$table
+			.bind( <span class="hljs-string">"touchstart.swipetoggle"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> e </span>)</span>{
+				<span class="hljs-keyword">var</span> originX = getCoord( e, <span class="hljs-string">'pageX'</span> ),
+					originY = getCoord( e, <span class="hljs-string">'pageY'</span> ),
+					x,
+					y;
+
+				$( win ).off( <span class="hljs-string">"resize"</span>, fakeBreakpoints );
+
+				$( <span class="hljs-keyword">this</span> )
+					.bind( <span class="hljs-string">"touchmove"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> e </span>)</span>{
+						x = getCoord( e, <span class="hljs-string">'pageX'</span> );
+						y = getCoord( e, <span class="hljs-string">'pageY'</span> );
+						<span class="hljs-keyword">var</span> cfg = Tablesaw.config.swipe;
+						<span class="hljs-keyword">if</span>( <span class="hljs-built_in">Math</span>.abs( x - originX ) &gt; cfg.horizontalThreshold &amp;&amp; <span class="hljs-built_in">Math</span>.abs( y - originY ) &lt; cfg.verticalThreshold ) {
+							e.preventDefault();
+						}
+					})
+					.bind( <span class="hljs-string">"touchend.swipetoggle"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+						<span class="hljs-keyword">var</span> cfg = Tablesaw.config.swipe;
+						<span class="hljs-keyword">if</span>( <span class="hljs-built_in">Math</span>.abs( y - originY ) &lt; cfg.verticalThreshold ) {
+							<span class="hljs-keyword">if</span>( x - originX &lt; -<span class="hljs-number">1</span> * cfg.horizontalThreshold ){
+								advance( <span class="hljs-literal">true</span> );
+							}
+							<span class="hljs-keyword">if</span>( x - originX &gt; cfg.horizontalThreshold ){
+								advance( <span class="hljs-literal">false</span> );
+							}
+						}
+
+						<span class="hljs-built_in">window</span>.setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+							$( win ).on( <span class="hljs-string">"resize"</span>, fakeBreakpoints );
+						}, <span class="hljs-number">300</span>);
+						$( <span class="hljs-keyword">this</span> ).unbind( <span class="hljs-string">"touchmove touchend"</span> );
+					});
+
+			})
+			.bind( <span class="hljs-string">"tablesawcolumns.swipetoggle"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+				$prevBtn[ canAdvance( getPrev() ) ? <span class="hljs-string">"removeClass"</span> : <span class="hljs-string">"addClass"</span> ]( hideBtn );
+				$nextBtn[ canAdvance( getNext() ) ? <span class="hljs-string">"removeClass"</span> : <span class="hljs-string">"addClass"</span> ]( hideBtn );
+			})
+			.bind( <span class="hljs-string">"tablesawnext.swipetoggle"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+				advance( <span class="hljs-literal">true</span> );
+			} )
+			.bind( <span class="hljs-string">"tablesawprev.swipetoggle"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+				advance( <span class="hljs-literal">false</span> );
+			} )
+			.bind( <span class="hljs-string">"tablesawdestroy.swipetoggle"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+				<span class="hljs-keyword">var</span> $t = $( <span class="hljs-keyword">this</span> );
+
+				$t.removeClass( <span class="hljs-string">'tablesaw-swipe'</span> );
+				$t.prev( <span class="hljs-string">'.tablesaw-bar'</span> ).find( <span class="hljs-string">'.tablesaw-advance'</span> ).remove();
+				$( win ).off( <span class="hljs-string">"resize"</span>, fakeBreakpoints );
+
+				$t.unbind( <span class="hljs-string">".swipetoggle"</span> );
+			});
+
+		fakeBreakpoints();
+		$( win ).on( <span class="hljs-string">"resize"</span>, fakeBreakpoints );
+	}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>on tablecreate, init</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	$( <span class="hljs-built_in">document</span> ).on( <span class="hljs-string">"tablesawcreate"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> e, Tablesaw </span>)</span>{
+
+		<span class="hljs-keyword">if</span>( Tablesaw.mode === <span class="hljs-string">'swipe'</span> ){
+			createSwipeTable( Tablesaw.$table );
+		}
+
+	} );
+
+}( <span class="hljs-keyword">this</span>, jQuery ));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

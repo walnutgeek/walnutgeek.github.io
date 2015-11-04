@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>tables.minimap.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="DataFrame.html">
+                  DataFrame.js
+                </a>
+              
+                
+                <a class="source" href="tables-init.html">
+                  tables-init.js
+                </a>
+              
+                
+                <a class="source" href="tables.btnmarkup.html">
+                  tables.btnmarkup.js
+                </a>
+              
+                
+                <a class="source" href="tables.columntoggle.html">
+                  tables.columntoggle.js
+                </a>
+              
+                
+                <a class="source" href="tables.html">
+                  tables.js
+                </a>
+              
+                
+                <a class="source" href="tables.minimap.html">
+                  tables.minimap.js
+                </a>
+              
+                
+                <a class="source" href="tables.modeswitch.html">
+                  tables.modeswitch.js
+                </a>
+              
+                
+                <a class="source" href="tables.sortable.html">
+                  tables.sortable.js
+                </a>
+              
+                
+                <a class="source" href="tables.stack.html">
+                  tables.stack.js
+                </a>
+              
+                
+                <a class="source" href="tables.swipetoggle.html">
+                  tables.swipetoggle.js
+                </a>
+              
+                
+                <a class="source" href="types.html">
+                  types.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+                
+                <a class="source" href="ux.html">
+                  ux.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>tables.minimap.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*
+* tablesaw: A set of plugins for responsive tables
+* minimap: a set of dots to show which columns are currently visible.
+* Copyright (c) 2013 Filament Group, Inc.
+* MIT License
+*/</span>
+
+;(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> win, $, undefined </span>)</span>{
+
+	<span class="hljs-keyword">var</span> MM = {
+		attr: {
+			init: <span class="hljs-string">'data-tablesaw-minimap'</span>
+		}
+	};
+
+	<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createMiniMap</span>(<span class="hljs-params"> $table </span>)</span>{
+
+		<span class="hljs-keyword">var</span> $btns = $( <span class="hljs-string">'&lt;div class="tablesaw-advance minimap"&gt;'</span> ),
+			$dotNav = $( <span class="hljs-string">'&lt;ul class="tablesaw-advance-dots"&gt;'</span> ).appendTo( $btns ),
+			hideDot = <span class="hljs-string">'tablesaw-advance-dots-hide'</span>,
+			$headerCells = $table.find( <span class="hljs-string">'thead th'</span> );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>populate dots</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		$headerCells.each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+			$dotNav.append( <span class="hljs-string">'&lt;li&gt;&lt;i&gt;&lt;/i&gt;&lt;/li&gt;'</span> );
+		});
+
+		$btns.appendTo( $table.prev( <span class="hljs-string">'.tablesaw-bar'</span> ) );
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">showMinimap</span>(<span class="hljs-params"> $table </span>) </span>{
+			<span class="hljs-keyword">var</span> mq = $table.attr( MM.attr.init );
+			<span class="hljs-keyword">return</span> !mq || win.matchMedia &amp;&amp; win.matchMedia( mq ).matches;
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">showHideNav</span>(<span class="hljs-params"></span>)</span>{
+			<span class="hljs-keyword">if</span>( !showMinimap( $table ) ) {
+				$btns.hide();
+				<span class="hljs-keyword">return</span>;
+			}
+			$btns.show();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>show/hide dots</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">var</span> dots = $dotNav.find( <span class="hljs-string">"li"</span> ).removeClass( hideDot );
+			$table.find( <span class="hljs-string">"thead th"</span> ).each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">i</span>)</span>{
+				<span class="hljs-keyword">if</span>( $( <span class="hljs-keyword">this</span> ).css( <span class="hljs-string">"display"</span> ) === <span class="hljs-string">"none"</span> ){
+					dots.eq( i ).addClass( hideDot );
+				}
+			});
+		}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>run on init and resize</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		showHideNav();
+		$( win ).on( <span class="hljs-string">"resize"</span>, showHideNav );
+
+
+		$table
+			.bind( <span class="hljs-string">"tablesawcolumns.minimap"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+				showHideNav();
+			})
+			.bind( <span class="hljs-string">"tablesawdestroy.minimap"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+				<span class="hljs-keyword">var</span> $t = $( <span class="hljs-keyword">this</span> );
+
+				$t.prev( <span class="hljs-string">'.tablesaw-bar'</span> ).find( <span class="hljs-string">'.tablesaw-advance'</span> ).remove();
+				$( win ).off( <span class="hljs-string">"resize"</span>, showHideNav );
+
+				$t.unbind( <span class="hljs-string">".minimap"</span> );
+			});
+	}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>on tablecreate, init</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	$( <span class="hljs-built_in">document</span> ).on( <span class="hljs-string">"tablesawcreate"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> e, Tablesaw </span>)</span>{
+
+		<span class="hljs-keyword">if</span>( ( Tablesaw.mode === <span class="hljs-string">'swipe'</span> || Tablesaw.mode === <span class="hljs-string">'columntoggle'</span> ) &amp;&amp; Tablesaw.$table.is( <span class="hljs-string">'[ '</span> + MM.attr.init + <span class="hljs-string">']'</span> ) ){
+			createMiniMap( Tablesaw.$table );
+		}
+
+	} );
+
+}( <span class="hljs-keyword">this</span>, jQuery ));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

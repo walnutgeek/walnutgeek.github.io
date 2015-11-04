@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>tables.columntoggle.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="DataFrame.html">
+                  DataFrame.js
+                </a>
+              
+                
+                <a class="source" href="tables-init.html">
+                  tables-init.js
+                </a>
+              
+                
+                <a class="source" href="tables.btnmarkup.html">
+                  tables.btnmarkup.js
+                </a>
+              
+                
+                <a class="source" href="tables.columntoggle.html">
+                  tables.columntoggle.js
+                </a>
+              
+                
+                <a class="source" href="tables.html">
+                  tables.js
+                </a>
+              
+                
+                <a class="source" href="tables.minimap.html">
+                  tables.minimap.js
+                </a>
+              
+                
+                <a class="source" href="tables.modeswitch.html">
+                  tables.modeswitch.js
+                </a>
+              
+                
+                <a class="source" href="tables.sortable.html">
+                  tables.sortable.js
+                </a>
+              
+                
+                <a class="source" href="tables.stack.html">
+                  tables.stack.js
+                </a>
+              
+                
+                <a class="source" href="tables.swipetoggle.html">
+                  tables.swipetoggle.js
+                </a>
+              
+                
+                <a class="source" href="types.html">
+                  types.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+                
+                <a class="source" href="ux.html">
+                  ux.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>tables.columntoggle.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*
+* tablesaw: A set of plugins for responsive tables
+* Column Toggle: allows the user to toggle which columns are visible.
+* Copyright (c) 2013 Filament Group, Inc.
+* MIT License
+*/</span>
+
+;(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> win, $, undefined </span>)</span>{
+
+	<span class="hljs-keyword">var</span> ColumnToggle = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> element </span>) </span>{
+
+		<span class="hljs-keyword">this</span>.$table = $( element );
+
+		<span class="hljs-keyword">this</span>.classes = {
+			columnToggleTable: <span class="hljs-string">'tablesaw-columntoggle'</span>,
+			columnBtnContain: <span class="hljs-string">'tablesaw-columntoggle-btnwrap tablesaw-advance'</span>,
+			columnBtn: <span class="hljs-string">'tablesaw-columntoggle-btn tablesaw-nav-btn down'</span>,
+			popup: <span class="hljs-string">'tablesaw-columntoggle-popup'</span>,
+			priorityPrefix: <span class="hljs-string">'tablesaw-priority-'</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>TODO duplicate class, also in tables.js</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			toolbar: <span class="hljs-string">'tablesaw-bar'</span>
+		};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Expose headers and allHeaders properties on the widget
+headers references the THs within the first TR in the table</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">this</span>.headers = <span class="hljs-keyword">this</span>.$table.find( <span class="hljs-string">'tr:first &gt; th'</span> );
+
+		<span class="hljs-keyword">this</span>.$table.data( <span class="hljs-string">'tablesaw-coltoggle'</span>, <span class="hljs-keyword">this</span> );
+	};
+
+	ColumnToggle.prototype.init = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+
+		<span class="hljs-keyword">var</span> tableId,
+			id,
+			$menuButton,
+			$popup,
+			$menu,
+			$btnContain,
+			self = <span class="hljs-keyword">this</span>;
+
+		<span class="hljs-keyword">this</span>.$table.addClass( <span class="hljs-keyword">this</span>.classes.columnToggleTable );
+
+		tableId = <span class="hljs-keyword">this</span>.$table.attr( <span class="hljs-string">"id"</span> );
+		id = tableId + <span class="hljs-string">"-popup"</span>;
+		$btnContain = $( <span class="hljs-string">"&lt;div class='"</span> + <span class="hljs-keyword">this</span>.classes.columnBtnContain + <span class="hljs-string">"'&gt;&lt;/div&gt;"</span> );
+		$menuButton = $( <span class="hljs-string">"&lt;a href='#"</span> + id + <span class="hljs-string">"' class='btn btn-micro "</span> + <span class="hljs-keyword">this</span>.classes.columnBtn +<span class="hljs-string">"' data-popup-link&gt;"</span> +
+										<span class="hljs-string">"&lt;span&gt;"</span> + Tablesaw.i18n.columnBtnText + <span class="hljs-string">"&lt;/span&gt;&lt;/a&gt;"</span> );
+		$popup = $( <span class="hljs-string">"&lt;div class='dialog-table-coltoggle "</span> + <span class="hljs-keyword">this</span>.classes.popup + <span class="hljs-string">"' id='"</span> + id + <span class="hljs-string">"'&gt;&lt;/div&gt;"</span> );
+		$menu = $( <span class="hljs-string">"&lt;div class='btn-group'&gt;&lt;/div&gt;"</span> );
+
+		<span class="hljs-keyword">var</span> hasNonPersistentHeaders = <span class="hljs-literal">false</span>;
+		$( <span class="hljs-keyword">this</span>.headers ).not( <span class="hljs-string">"td"</span> ).each( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+			<span class="hljs-keyword">var</span> $<span class="hljs-keyword">this</span> = $( <span class="hljs-keyword">this</span> ),
+				priority = $<span class="hljs-keyword">this</span>.attr(<span class="hljs-string">"data-tablesaw-priority"</span>),
+				$cells = $<span class="hljs-keyword">this</span>.add( <span class="hljs-keyword">this</span>.cells );
+
+			<span class="hljs-keyword">if</span>( priority &amp;&amp; priority !== <span class="hljs-string">"persist"</span> ) {
+				$cells.addClass( self.classes.priorityPrefix + priority );
+
+				$(<span class="hljs-string">"&lt;label&gt;&lt;input type='checkbox' checked&gt;"</span> + $<span class="hljs-keyword">this</span>.text() + <span class="hljs-string">"&lt;/label&gt;"</span> )
+					.appendTo( $menu )
+					.children( <span class="hljs-number">0</span> )
+					.data( <span class="hljs-string">"cells"</span>, $cells );
+
+				hasNonPersistentHeaders = <span class="hljs-literal">true</span>;
+			}
+		});
+
+		<span class="hljs-keyword">if</span>( !hasNonPersistentHeaders ) {
+			$menu.append( <span class="hljs-string">'&lt;label&gt;'</span> + Tablesaw.i18n.columnsDialogError + <span class="hljs-string">'&lt;/label&gt;'</span> );
+		}
+
+		$menu.appendTo( $popup );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>bind change event listeners to inputs - TODO: move to a private method?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		$menu.find( <span class="hljs-string">'input[type="checkbox"]'</span> ).on( <span class="hljs-string">"change"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) </span>{
+			<span class="hljs-keyword">var</span> checked = e.target.checked;
+
+			$( e.target ).data( <span class="hljs-string">"cells"</span> )
+				.toggleClass( <span class="hljs-string">"tablesaw-cell-hidden"</span>, !checked )
+				.toggleClass( <span class="hljs-string">"tablesaw-cell-visible"</span>, checked );
+
+			self.$table.trigger( <span class="hljs-string">'tablesawcolumns'</span> );
+		});
+
+		$menuButton.appendTo( $btnContain );
+		$btnContain.appendTo( <span class="hljs-keyword">this</span>.$table.prev( <span class="hljs-string">'.'</span> + <span class="hljs-keyword">this</span>.classes.toolbar ) );
+
+		<span class="hljs-keyword">var</span> closeTimeout;
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">openPopup</span>(<span class="hljs-params"></span>) </span>{
+			$btnContain.addClass( <span class="hljs-string">'visible'</span> );
+			$menuButton.removeClass( <span class="hljs-string">'down'</span> ).addClass( <span class="hljs-string">'up'</span> );
+
+			$( <span class="hljs-built_in">document</span> ).unbind( <span class="hljs-string">'click.'</span> + tableId, closePopup );
+
+			<span class="hljs-built_in">window</span>.clearTimeout( closeTimeout );
+			closeTimeout = <span class="hljs-built_in">window</span>.setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+				$( <span class="hljs-built_in">document</span> ).one( <span class="hljs-string">'click.'</span> + tableId, closePopup );
+			}, <span class="hljs-number">15</span> );
+		}
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">closePopup</span>(<span class="hljs-params"> event </span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Click came from inside the popup, ignore.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">if</span>( event &amp;&amp; $( event.target ).closest( <span class="hljs-string">"."</span> + self.classes.popup ).length ) {
+				<span class="hljs-keyword">return</span>;
+			}
+
+			$( <span class="hljs-built_in">document</span> ).unbind( <span class="hljs-string">'click.'</span> + tableId );
+			$menuButton.removeClass( <span class="hljs-string">'up'</span> ).addClass( <span class="hljs-string">'down'</span> );
+			$btnContain.removeClass( <span class="hljs-string">'visible'</span> );
+		}
+
+		$menuButton.on( <span class="hljs-string">"click.tablesaw"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> event </span>) </span>{
+			event.preventDefault();
+
+			<span class="hljs-keyword">if</span>( !$btnContain.is( <span class="hljs-string">".visible"</span> ) ) {
+				openPopup();
+			} <span class="hljs-keyword">else</span> {
+				closePopup();
+			}
+		});
+
+		$popup.appendTo( $btnContain );
+
+		<span class="hljs-keyword">this</span>.$menu = $menu;
+
+		$(<span class="hljs-built_in">window</span>).on( <span class="hljs-string">"resize."</span> + tableId, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+			self.refreshToggle();
+		});
+
+		<span class="hljs-keyword">this</span>.refreshToggle();
+	};
+
+	ColumnToggle.prototype.refreshToggle = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+		<span class="hljs-keyword">this</span>.$menu.find( <span class="hljs-string">"input"</span> ).each( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+			<span class="hljs-keyword">var</span> $<span class="hljs-keyword">this</span> = $( <span class="hljs-keyword">this</span> );
+
+			<span class="hljs-keyword">this</span>.checked = $<span class="hljs-keyword">this</span>.data( <span class="hljs-string">"cells"</span> ).eq( <span class="hljs-number">0</span> ).css( <span class="hljs-string">"display"</span> ) === <span class="hljs-string">"table-cell"</span>;
+		});
+	};
+
+	ColumnToggle.prototype.refreshPriority = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+		<span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+		$(<span class="hljs-keyword">this</span>.headers).not( <span class="hljs-string">"td"</span> ).each( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+			<span class="hljs-keyword">var</span> $<span class="hljs-keyword">this</span> = $( <span class="hljs-keyword">this</span> ),
+				priority = $<span class="hljs-keyword">this</span>.attr(<span class="hljs-string">"data-tablesaw-priority"</span>),
+				$cells = $<span class="hljs-keyword">this</span>.add( <span class="hljs-keyword">this</span>.cells );
+
+			<span class="hljs-keyword">if</span>( priority &amp;&amp; priority !== <span class="hljs-string">"persist"</span> ) {
+				$cells.addClass( self.classes.priorityPrefix + priority );
+			}
+		});
+	};
+
+	ColumnToggle.prototype.destroy = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>table toolbars, document and window .tableId events
+removed in parent tables.js destroy method</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+		<span class="hljs-keyword">this</span>.$table.removeClass( <span class="hljs-keyword">this</span>.classes.columnToggleTable );
+		<span class="hljs-keyword">this</span>.$table.find( <span class="hljs-string">'th, td'</span> ).each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+			<span class="hljs-keyword">var</span> $cell = $( <span class="hljs-keyword">this</span> );
+			$cell.removeClass( <span class="hljs-string">'tablesaw-cell-hidden'</span> )
+				.removeClass( <span class="hljs-string">'tablesaw-cell-visible'</span> );
+
+			<span class="hljs-keyword">this</span>.className = <span class="hljs-keyword">this</span>.className.replace( <span class="hljs-regexp">/\bui\-table\-priority\-\d\b/g</span>, <span class="hljs-string">''</span> );
+		});
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>on tablecreate, init</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	$( <span class="hljs-built_in">document</span> ).on( <span class="hljs-string">"tablesawcreate"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> e, Tablesaw </span>)</span>{
+
+		<span class="hljs-keyword">if</span>( Tablesaw.mode === <span class="hljs-string">'columntoggle'</span> ){
+			<span class="hljs-keyword">var</span> table = <span class="hljs-keyword">new</span> ColumnToggle( Tablesaw.table );
+			table.init();
+		}
+
+	} );
+
+	$( <span class="hljs-built_in">document</span> ).on( <span class="hljs-string">"tablesawdestroy"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> e, Tablesaw </span>)</span>{
+		<span class="hljs-keyword">if</span>( Tablesaw.mode === <span class="hljs-string">'columntoggle'</span> ){
+			$( Tablesaw.table ).data( <span class="hljs-string">'tablesaw-coltoggle'</span> ).destroy();
+		}
+	} );
+
+}( <span class="hljs-keyword">this</span>, jQuery ));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

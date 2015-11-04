@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>tables-init.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="DataFrame.html">
+                  DataFrame.js
+                </a>
+              
+                
+                <a class="source" href="tables-init.html">
+                  tables-init.js
+                </a>
+              
+                
+                <a class="source" href="tables.btnmarkup.html">
+                  tables.btnmarkup.js
+                </a>
+              
+                
+                <a class="source" href="tables.columntoggle.html">
+                  tables.columntoggle.js
+                </a>
+              
+                
+                <a class="source" href="tables.html">
+                  tables.js
+                </a>
+              
+                
+                <a class="source" href="tables.minimap.html">
+                  tables.minimap.js
+                </a>
+              
+                
+                <a class="source" href="tables.modeswitch.html">
+                  tables.modeswitch.js
+                </a>
+              
+                
+                <a class="source" href="tables.sortable.html">
+                  tables.sortable.js
+                </a>
+              
+                
+                <a class="source" href="tables.stack.html">
+                  tables.stack.js
+                </a>
+              
+                
+                <a class="source" href="tables.swipetoggle.html">
+                  tables.swipetoggle.js
+                </a>
+              
+                
+                <a class="source" href="types.html">
+                  types.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+                
+                <a class="source" href="ux.html">
+                  ux.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>tables-init.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*
+* tablesaw: A set of plugins for responsive tables
+* Copyright (c) 2013 Filament Group, Inc.
+* MIT License
+*/</span>
+
+;(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> $ </span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Cut the mustard</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">if</span>( !( <span class="hljs-string">'querySelector'</span> <span class="hljs-keyword">in</span> <span class="hljs-built_in">document</span> ) ||
+			( <span class="hljs-built_in">window</span>.blackberry &amp;&amp; !<span class="hljs-built_in">window</span>.WebKitPoint ) ||
+			<span class="hljs-built_in">window</span>.operamini ) {
+		<span class="hljs-keyword">return</span>;
+	} <span class="hljs-keyword">else</span> {
+		$( <span class="hljs-built_in">document</span>.documentElement ).addClass( <span class="hljs-string">'tablesaw-enhanced'</span> );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>DOM-ready auto-init of plugins.
+Many plugins bind to an “enhance” event to init themselves on dom ready, or when new markup is inserted into the DOM</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		$( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+			$( <span class="hljs-built_in">document</span> ).trigger( <span class="hljs-string">"enhance.tablesaw"</span> );
+		});
+	}
+
+})( jQuery );</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>tables.sortable.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="DataFrame.html">
+                  DataFrame.js
+                </a>
+              
+                
+                <a class="source" href="tables-init.html">
+                  tables-init.js
+                </a>
+              
+                
+                <a class="source" href="tables.btnmarkup.html">
+                  tables.btnmarkup.js
+                </a>
+              
+                
+                <a class="source" href="tables.columntoggle.html">
+                  tables.columntoggle.js
+                </a>
+              
+                
+                <a class="source" href="tables.html">
+                  tables.js
+                </a>
+              
+                
+                <a class="source" href="tables.minimap.html">
+                  tables.minimap.js
+                </a>
+              
+                
+                <a class="source" href="tables.modeswitch.html">
+                  tables.modeswitch.js
+                </a>
+              
+                
+                <a class="source" href="tables.sortable.html">
+                  tables.sortable.js
+                </a>
+              
+                
+                <a class="source" href="tables.stack.html">
+                  tables.stack.js
+                </a>
+              
+                
+                <a class="source" href="tables.swipetoggle.html">
+                  tables.swipetoggle.js
+                </a>
+              
+                
+                <a class="source" href="types.html">
+                  types.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+                
+                <a class="source" href="ux.html">
+                  ux.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>tables.sortable.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*
+* tablesaw: A set of plugins for responsive tables
+* Sortable column headers
+* Copyright (c) 2013 Filament Group, Inc.
+* MIT License
+*/</span>
+
+;(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> $ </span>) </span>{
+	<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getSortValue</span>(<span class="hljs-params"> cell </span>) </span>{
+		<span class="hljs-keyword">return</span> $.map( cell.childNodes, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> el </span>) </span>{
+				<span class="hljs-keyword">var</span> $el = $( el );
+				<span class="hljs-keyword">if</span>( $el.is( <span class="hljs-string">'input, select'</span> ) ) {
+					<span class="hljs-keyword">return</span> $el.val();
+				} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>( $el.hasClass( <span class="hljs-string">'tablesaw-cell-label'</span> ) ) {
+					<span class="hljs-keyword">return</span>;
+				}
+				<span class="hljs-keyword">return</span> $.trim( $el.text() );
+			}).join( <span class="hljs-string">''</span> );
+	}
+
+	<span class="hljs-keyword">var</span> pluginName = <span class="hljs-string">"tablesaw-sortable"</span>,
+		initSelector = <span class="hljs-string">"table[data-"</span> + pluginName + <span class="hljs-string">"]"</span>,
+		sortableSwitchSelector = <span class="hljs-string">"[data-"</span> + pluginName + <span class="hljs-string">"-switch]"</span>,
+		attrs = {
+			defaultCol: <span class="hljs-string">"data-tablesaw-sortable-default-col"</span>
+		},
+		classes = {
+			head: pluginName + <span class="hljs-string">"-head"</span>,
+			ascend: pluginName + <span class="hljs-string">"-ascending"</span>,
+			descend: pluginName + <span class="hljs-string">"-descending"</span>,
+			switcher: pluginName + <span class="hljs-string">"-switch"</span>,
+			tableToolbar: <span class="hljs-string">'tablesaw-toolbar'</span>,
+			sortButton: pluginName + <span class="hljs-string">"-btn"</span>
+		},
+		methods = {
+			_create: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> o </span>)</span>{
+				<span class="hljs-keyword">return</span> $( <span class="hljs-keyword">this</span> ).each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+					<span class="hljs-keyword">var</span> init = $( <span class="hljs-keyword">this</span> ).data( <span class="hljs-string">"init"</span> + pluginName );
+					<span class="hljs-keyword">if</span>( init ) {
+						<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+					}
+					$( <span class="hljs-keyword">this</span> )
+						.data( <span class="hljs-string">"init"</span>+ pluginName, <span class="hljs-literal">true</span> )
+						.trigger( <span class="hljs-string">"beforecreate."</span> + pluginName )
+						[ pluginName ]( <span class="hljs-string">"_init"</span> , o )
+						.trigger( <span class="hljs-string">"create."</span> + pluginName );
+				});
+			},
+			_init: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+				<span class="hljs-keyword">var</span> el = $( <span class="hljs-keyword">this</span> ),
+					heads,
+					$switcher;
+
+				<span class="hljs-keyword">var</span> addClassToTable = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+						el.addClass( pluginName );
+					},
+					addClassToHeads = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> h </span>)</span>{
+						$.each( h , <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> i , v </span>)</span>{
+							$( v ).addClass( classes.head );
+						});
+					},
+					makeHeadsActionable = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> h , fn </span>)</span>{
+						$.each( h , <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> i , v </span>)</span>{
+							<span class="hljs-keyword">var</span> b = $( <span class="hljs-string">"&lt;button class='"</span> + classes.sortButton + <span class="hljs-string">"'/&gt;"</span> );
+							b.bind( <span class="hljs-string">"click"</span> , { col: v } , fn );
+							$( v ).wrapInner( b );
+						});
+					},
+					clearOthers = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> sibs </span>)</span>{
+						$.each( sibs , <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> i , v </span>)</span>{
+							<span class="hljs-keyword">var</span> col = $( v );
+							col.removeAttr( attrs.defaultCol );
+							col.removeClass( classes.ascend );
+							col.removeClass( classes.descend );
+						});
+					},
+					headsOnAction = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> e </span>)</span>{
+						<span class="hljs-keyword">if</span>( $( e.target ).is( <span class="hljs-string">'a[href]'</span> ) ) {
+							<span class="hljs-keyword">return</span>;
+						}
+
+						e.stopPropagation();
+						<span class="hljs-keyword">var</span> head = $( <span class="hljs-keyword">this</span> ).parent(),
+							v = e.data.col,
+							newSortValue = heads.index( head );
+
+						clearOthers( head.siblings() );
+						<span class="hljs-keyword">if</span>( head.hasClass( classes.descend ) ){
+							el[ pluginName ]( <span class="hljs-string">"sortBy"</span> , v , <span class="hljs-literal">true</span>);
+							newSortValue += <span class="hljs-string">'_asc'</span>;
+						} <span class="hljs-keyword">else</span> {
+							el[ pluginName ]( <span class="hljs-string">"sortBy"</span> , v );
+							newSortValue += <span class="hljs-string">'_desc'</span>;
+						}
+						<span class="hljs-keyword">if</span>( $switcher ) {
+							$switcher.find( <span class="hljs-string">'select'</span> ).val( newSortValue ).trigger( <span class="hljs-string">'refresh'</span> );
+						}
+
+						e.preventDefault();
+					},
+					handleDefault = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> heads </span>)</span>{
+						$.each( heads , <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> idx , el </span>)</span>{
+							<span class="hljs-keyword">var</span> $el = $( el );
+							<span class="hljs-keyword">if</span>( $el.is( <span class="hljs-string">"["</span> + attrs.defaultCol + <span class="hljs-string">"]"</span> ) ){
+								<span class="hljs-keyword">if</span>( !$el.hasClass( classes.descend ) ) {
+									$el.addClass( classes.ascend );
+								}
+							}
+						});
+					},
+					addSwitcher = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> heads </span>)</span>{
+						$switcher = $( <span class="hljs-string">'&lt;div&gt;'</span> ).addClass( classes.switcher ).addClass( classes.tableToolbar ).html(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+							<span class="hljs-keyword">var</span> html = [ <span class="hljs-string">'&lt;label&gt;'</span> + Tablesaw.i18n.sort + <span class="hljs-string">':'</span> ];
+
+							html.push( <span class="hljs-string">'&lt;span class="btn btn-small"&gt;&amp;#160;&lt;select&gt;'</span> );
+							heads.each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> j </span>) </span>{
+								<span class="hljs-keyword">var</span> $t = $( <span class="hljs-keyword">this</span> ),
+									isDefaultCol = $t.is( <span class="hljs-string">"["</span> + attrs.defaultCol + <span class="hljs-string">"]"</span> ),
+									isDescending = $t.hasClass( classes.descend ),
+									isNumeric = <span class="hljs-literal">false</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Check only the first three rows to see if the column is numbers.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>								$( <span class="hljs-keyword">this</span>.cells ).slice( <span class="hljs-number">0</span>, <span class="hljs-number">3</span> ).each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+									<span class="hljs-keyword">if</span>( !<span class="hljs-built_in">isNaN</span>( <span class="hljs-built_in">parseInt</span>( getSortValue( <span class="hljs-keyword">this</span> ), <span class="hljs-number">10</span> ) ) ) {
+										isNumeric = <span class="hljs-literal">true</span>;
+										<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+									}
+								});
+
+								html.push( <span class="hljs-string">'&lt;option'</span> + ( isDefaultCol &amp;&amp; !isDescending ? <span class="hljs-string">' selected'</span> : <span class="hljs-string">''</span> ) + <span class="hljs-string">' value="'</span> + j + <span class="hljs-string">'_asc"&gt;'</span> + $t.text() + <span class="hljs-string">' '</span> + ( isNumeric ? <span class="hljs-string">'&amp;#x2191;'</span> : <span class="hljs-string">'(A-Z)'</span> ) + <span class="hljs-string">'&lt;/option&gt;'</span> );
+								html.push( <span class="hljs-string">'&lt;option'</span> + ( isDefaultCol &amp;&amp; isDescending ? <span class="hljs-string">' selected'</span> : <span class="hljs-string">''</span> ) + <span class="hljs-string">' value="'</span> + j + <span class="hljs-string">'_desc"&gt;'</span> + $t.text() + <span class="hljs-string">' '</span> + ( isNumeric ? <span class="hljs-string">'&amp;#x2193;'</span> : <span class="hljs-string">'(Z-A)'</span> ) + <span class="hljs-string">'&lt;/option&gt;'</span> );
+							});
+							html.push( <span class="hljs-string">'&lt;/select&gt;&lt;/span&gt;&lt;/label&gt;'</span> );
+
+							<span class="hljs-keyword">return</span> html.join(<span class="hljs-string">''</span>);
+						});
+
+						<span class="hljs-keyword">var</span> $toolbar = el.prev( <span class="hljs-string">'.tablesaw-bar'</span> ),
+							$firstChild = $toolbar.children().eq( <span class="hljs-number">0</span> );
+
+						<span class="hljs-keyword">if</span>( $firstChild.length ) {
+							$switcher.insertBefore( $firstChild );
+						} <span class="hljs-keyword">else</span> {
+							$switcher.appendTo( $toolbar );
+						}
+						$switcher.find( <span class="hljs-string">'.btn'</span> ).tablesawbtn();
+						$switcher.find( <span class="hljs-string">'select'</span> ).on( <span class="hljs-string">'change'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+							<span class="hljs-keyword">var</span> val = $( <span class="hljs-keyword">this</span> ).val().split( <span class="hljs-string">'_'</span> ),
+								head = heads.eq( val[ <span class="hljs-number">0</span> ] );
+
+							clearOthers( head.siblings() );
+							el[ pluginName ]( <span class="hljs-string">'sortBy'</span>, head.get( <span class="hljs-number">0</span> ), val[ <span class="hljs-number">1</span> ] === <span class="hljs-string">'asc'</span> );
+						});
+					};
+
+					addClassToTable();
+					heads = el.find( <span class="hljs-string">"thead th[data-"</span> + pluginName + <span class="hljs-string">"-col]"</span> );
+					addClassToHeads( heads );
+					makeHeadsActionable( heads , headsOnAction );
+					handleDefault( heads );
+
+					<span class="hljs-keyword">if</span>( el.is( sortableSwitchSelector ) ) {
+						addSwitcher( heads, el.find(<span class="hljs-string">'tbody tr:nth-child(-n+3)'</span>) );
+					}
+			},
+			getColumnNumber: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> col </span>)</span>{
+				<span class="hljs-keyword">return</span> $( col ).prevAll().length;
+			},
+			getTableRows: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+				<span class="hljs-keyword">return</span> $( <span class="hljs-keyword">this</span> ).find( <span class="hljs-string">"tbody tr"</span> );
+			},
+			sortRows: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> rows , colNum , ascending, col </span>)</span>{
+				<span class="hljs-keyword">var</span> cells, fn, sorted;
+				<span class="hljs-keyword">var</span> getCells = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> rows </span>)</span>{
+						<span class="hljs-keyword">var</span> cells = [];
+						$.each( rows , <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> i , r </span>)</span>{
+							cells.push({
+								cell: getSortValue( $( r ).children().get( colNum ) ),
+								rowNum: i
+							});
+						});
+						<span class="hljs-keyword">return</span> cells;
+					},
+					getSortFxn = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> ascending, forceNumeric </span>)</span>{
+						<span class="hljs-keyword">var</span> fn,
+							regex = <span class="hljs-regexp">/[^\-\+\d\.]/g</span>;
+						<span class="hljs-keyword">if</span>( ascending ){
+							fn = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> a , b </span>)</span>{
+								<span class="hljs-keyword">if</span>( forceNumeric || !<span class="hljs-built_in">isNaN</span>( <span class="hljs-built_in">parseFloat</span>( a.cell ) ) ) {
+									<span class="hljs-keyword">return</span> <span class="hljs-built_in">parseFloat</span>( a.cell.replace( regex, <span class="hljs-string">''</span> ) ) - <span class="hljs-built_in">parseFloat</span>( b.cell.replace( regex, <span class="hljs-string">''</span> ) );
+								} <span class="hljs-keyword">else</span> {
+									<span class="hljs-keyword">return</span> a.cell.toLowerCase() &gt; b.cell.toLowerCase() ? <span class="hljs-number">1</span> : -<span class="hljs-number">1</span>;
+								}
+							};
+						} <span class="hljs-keyword">else</span> {
+							fn = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> a , b </span>)</span>{
+								<span class="hljs-keyword">if</span>( forceNumeric || !<span class="hljs-built_in">isNaN</span>( <span class="hljs-built_in">parseFloat</span>( a.cell ) ) ) {
+									<span class="hljs-keyword">return</span> <span class="hljs-built_in">parseFloat</span>( b.cell.replace( regex, <span class="hljs-string">''</span> ) ) - <span class="hljs-built_in">parseFloat</span>( a.cell.replace( regex, <span class="hljs-string">''</span> ) );
+								} <span class="hljs-keyword">else</span> {
+									<span class="hljs-keyword">return</span> a.cell.toLowerCase() &lt; b.cell.toLowerCase() ? <span class="hljs-number">1</span> : -<span class="hljs-number">1</span>;
+								}
+							};
+						}
+						<span class="hljs-keyword">return</span> fn;
+					},
+					applyToRows = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> sorted , rows </span>)</span>{
+						<span class="hljs-keyword">var</span> newRows = [], i, l, cur;
+						<span class="hljs-keyword">for</span>( i = <span class="hljs-number">0</span>, l = sorted.length ; i &lt; l ; i++ ){
+							cur = sorted[ i ].rowNum;
+							newRows.push( rows[cur] );
+						}
+						<span class="hljs-keyword">return</span> newRows;
+					};
+
+				cells = getCells( rows );
+				<span class="hljs-keyword">var</span> customFn = $( col ).data( <span class="hljs-string">'tablesaw-sort'</span> );
+				fn = ( customFn &amp;&amp; <span class="hljs-keyword">typeof</span> customFn === <span class="hljs-string">"function"</span> ? customFn( ascending ) : <span class="hljs-literal">false</span> ) ||
+					getSortFxn( ascending, $( col ).is( <span class="hljs-string">'[data-sortable-numeric]'</span> ) );
+				sorted = cells.sort( fn );
+				rows = applyToRows( sorted , rows );
+				<span class="hljs-keyword">return</span> rows;
+			},
+			replaceTableRows: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> rows </span>)</span>{
+				<span class="hljs-keyword">var</span> el = $( <span class="hljs-keyword">this</span> ),
+					body = el.find( <span class="hljs-string">"tbody"</span> );
+				body.html( rows );
+			},
+			makeColDefault: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> col , a </span>)</span>{
+				<span class="hljs-keyword">var</span> c = $( col );
+				c.attr( attrs.defaultCol , <span class="hljs-string">"true"</span> );
+				<span class="hljs-keyword">if</span>( a ){
+					c.removeClass( classes.descend );
+					c.addClass( classes.ascend );
+				} <span class="hljs-keyword">else</span> {
+					c.removeClass( classes.ascend );
+					c.addClass( classes.descend );
+				}
+			},
+			sortBy: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> col , ascending </span>)</span>{
+				<span class="hljs-keyword">var</span> el = $( <span class="hljs-keyword">this</span> ), colNum, rows;
+
+				colNum = el[ pluginName ]( <span class="hljs-string">"getColumnNumber"</span> , col );
+				rows = el[ pluginName ]( <span class="hljs-string">"getTableRows"</span> );
+				rows = el[ pluginName ]( <span class="hljs-string">"sortRows"</span> , rows , colNum , ascending, col );
+				el[ pluginName ]( <span class="hljs-string">"replaceTableRows"</span> , rows );
+				el[ pluginName ]( <span class="hljs-string">"makeColDefault"</span> , col , ascending );
+			}
+		};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Collection method.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	$.fn[ pluginName ] = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> arrg </span>) </span>{
+		<span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.call( <span class="hljs-built_in">arguments</span> , <span class="hljs-number">1</span>),
+			returnVal;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>if it’s a method</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span>( arrg &amp;&amp; <span class="hljs-keyword">typeof</span>( arrg ) === <span class="hljs-string">"string"</span> ){
+			returnVal = $.fn[ pluginName ].prototype[ arrg ].apply( <span class="hljs-keyword">this</span>[<span class="hljs-number">0</span>], args );
+			<span class="hljs-keyword">return</span> (<span class="hljs-keyword">typeof</span> returnVal !== <span class="hljs-string">"undefined"</span>)? returnVal:$(<span class="hljs-keyword">this</span>);
+		}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>check init</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span>( !$( <span class="hljs-keyword">this</span> ).data( pluginName + <span class="hljs-string">"data"</span> ) ){
+			$( <span class="hljs-keyword">this</span> ).data( pluginName + <span class="hljs-string">"active"</span>, <span class="hljs-literal">true</span> );
+			$.fn[ pluginName ].prototype._create.call( <span class="hljs-keyword">this</span> , arrg );
+		}
+		<span class="hljs-keyword">return</span> $(<span class="hljs-keyword">this</span>);
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>add methods</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	$.extend( $.fn[ pluginName ].prototype, methods );
+
+	$( <span class="hljs-built_in">document</span> ).on( <span class="hljs-string">"tablesawcreate"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> e, Tablesaw </span>) </span>{
+		<span class="hljs-keyword">if</span>( Tablesaw.$table.is( initSelector ) ) {
+			Tablesaw.$table[ pluginName ]();
+		}
+	});
+
+}( jQuery ));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

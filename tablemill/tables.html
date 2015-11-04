@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>tables.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="DataFrame.html">
+                  DataFrame.js
+                </a>
+              
+                
+                <a class="source" href="tables-init.html">
+                  tables-init.js
+                </a>
+              
+                
+                <a class="source" href="tables.btnmarkup.html">
+                  tables.btnmarkup.js
+                </a>
+              
+                
+                <a class="source" href="tables.columntoggle.html">
+                  tables.columntoggle.js
+                </a>
+              
+                
+                <a class="source" href="tables.html">
+                  tables.js
+                </a>
+              
+                
+                <a class="source" href="tables.minimap.html">
+                  tables.minimap.js
+                </a>
+              
+                
+                <a class="source" href="tables.modeswitch.html">
+                  tables.modeswitch.js
+                </a>
+              
+                
+                <a class="source" href="tables.sortable.html">
+                  tables.sortable.js
+                </a>
+              
+                
+                <a class="source" href="tables.stack.html">
+                  tables.stack.js
+                </a>
+              
+                
+                <a class="source" href="tables.swipetoggle.html">
+                  tables.swipetoggle.js
+                </a>
+              
+                
+                <a class="source" href="types.html">
+                  types.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+                
+                <a class="source" href="ux.html">
+                  ux.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>tables.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*global Tablesaw:true */</span>
+
+<span class="hljs-comment">/*
+* tablesaw: A set of plugins for responsive tables
+* Stack and Column Toggle tables
+* Copyright (c) 2013 Filament Group, Inc.
+* MIT License
+*/</span>
+
+<span class="hljs-keyword">if</span>( <span class="hljs-keyword">typeof</span> Tablesaw === <span class="hljs-string">"undefined"</span> ) {
+	Tablesaw = {
+		i18n: {
+			modes: [ <span class="hljs-string">'Stack'</span>, <span class="hljs-string">'Swipe'</span>, <span class="hljs-string">'Toggle'</span> ],
+			columns: <span class="hljs-string">'Col&lt;span class=\"a11y-sm\"&gt;umn&lt;/span&gt;s'</span>,
+			columnBtnText: <span class="hljs-string">'Columns'</span>,
+			columnsDialogError: <span class="hljs-string">'No eligible columns.'</span>,
+			sort: <span class="hljs-string">'Sort'</span>
+		}
+	};
+}
+<span class="hljs-keyword">if</span>( !Tablesaw.config ) {
+	Tablesaw.config = {};
+}
+
+;(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> $ </span>) </span>{
+	<span class="hljs-keyword">var</span> pluginName = <span class="hljs-string">"table"</span>,
+		classes = {
+			toolbar: <span class="hljs-string">"tablesaw-bar"</span>
+		},
+		events = {
+			create: <span class="hljs-string">"tablesawcreate"</span>,
+			destroy: <span class="hljs-string">"tablesawdestroy"</span>,
+			refresh: <span class="hljs-string">"tablesawrefresh"</span>
+		},
+		defaultMode = <span class="hljs-string">"stack"</span>,
+		initSelector = <span class="hljs-string">"table[data-tablesaw-mode],table[data-tablesaw-sortable]"</span>;
+
+	<span class="hljs-keyword">var</span> Table = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> element </span>) </span>{
+		<span class="hljs-keyword">if</span>( !element ) {
+			<span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>( <span class="hljs-string">"Tablesaw requires an element."</span> );
+		}
+
+		<span class="hljs-keyword">this</span>.table = element;
+		<span class="hljs-keyword">this</span>.$table = $( element );
+
+		<span class="hljs-keyword">this</span>.mode = <span class="hljs-keyword">this</span>.$table.attr( <span class="hljs-string">"data-tablesaw-mode"</span> ) || defaultMode;
+
+		<span class="hljs-keyword">this</span>.init();
+	};
+
+	Table.prototype.init = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>assign an id if there is none</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> ( !<span class="hljs-keyword">this</span>.$table.attr( <span class="hljs-string">"id"</span> ) ) {
+			<span class="hljs-keyword">this</span>.$table.attr( <span class="hljs-string">"id"</span>, pluginName + <span class="hljs-string">"-"</span> + <span class="hljs-built_in">Math</span>.round( <span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">10000</span> ) );
+		}
+
+		<span class="hljs-keyword">this</span>.createToolbar();
+
+		<span class="hljs-keyword">var</span> colstart = <span class="hljs-keyword">this</span>._initCells();
+
+		<span class="hljs-keyword">this</span>.$table.trigger( events.create, [ <span class="hljs-keyword">this</span>, colstart ] );
+	};
+
+	Table.prototype._initCells = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+		<span class="hljs-keyword">var</span> colstart,
+			thrs = <span class="hljs-keyword">this</span>.table.querySelectorAll( <span class="hljs-string">"thead tr"</span> ),
+			self = <span class="hljs-keyword">this</span>;
+
+		$( thrs ).each( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+			<span class="hljs-keyword">var</span> coltally = <span class="hljs-number">0</span>;
+
+			$( <span class="hljs-keyword">this</span> ).children().each( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+				<span class="hljs-keyword">var</span> span = <span class="hljs-built_in">parseInt</span>( <span class="hljs-keyword">this</span>.getAttribute( <span class="hljs-string">"colspan"</span> ), <span class="hljs-number">10</span> ),
+					sel = <span class="hljs-string">":nth-child("</span> + ( coltally + <span class="hljs-number">1</span> ) + <span class="hljs-string">")"</span>;
+
+				colstart = coltally + <span class="hljs-number">1</span>;
+
+				<span class="hljs-keyword">if</span>( span ){
+					<span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> k = <span class="hljs-number">0</span>; k &lt; span - <span class="hljs-number">1</span>; k++ ){
+						coltally++;
+						sel += <span class="hljs-string">", :nth-child("</span> + ( coltally + <span class="hljs-number">1</span> ) + <span class="hljs-string">")"</span>;
+					}
+				}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Store “cells” data on header as a reference to all cells in the same column as this TH</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="hljs-keyword">this</span>.cells = self.$table.find(<span class="hljs-string">"tr"</span>).not( $( thrs ).eq( <span class="hljs-number">0</span> ) ).not( <span class="hljs-keyword">this</span> ).children( sel );
+				coltally++;
+			});
+		});
+
+		<span class="hljs-keyword">return</span> colstart;
+	};
+
+	Table.prototype.refresh = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+		<span class="hljs-keyword">this</span>._initCells();
+
+		<span class="hljs-keyword">this</span>.$table.trigger( events.refresh );
+	};
+
+	Table.prototype.createToolbar = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Insert the toolbar
+TODO move this into a separate component</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">var</span> $toolbar = <span class="hljs-keyword">this</span>.$table.prev( <span class="hljs-string">'.'</span> + classes.toolbar );
+		<span class="hljs-keyword">if</span>( !$toolbar.length ) {
+			$toolbar = $( <span class="hljs-string">'&lt;div&gt;'</span> )
+				.addClass( classes.toolbar )
+				.insertBefore( <span class="hljs-keyword">this</span>.$table );
+		}
+		<span class="hljs-keyword">this</span>.$toolbar = $toolbar;
+
+		<span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.mode ) {
+			<span class="hljs-keyword">this</span>.$toolbar.addClass( <span class="hljs-string">'mode-'</span> + <span class="hljs-keyword">this</span>.mode );
+		}
+	};
+
+	Table.prototype.destroy = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Don’t remove the toolbar. Some of the table features are not yet destroy-friendly.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">this</span>.$table.prev( <span class="hljs-string">'.'</span> + classes.toolbar ).each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+			<span class="hljs-keyword">this</span>.className = <span class="hljs-keyword">this</span>.className.replace( <span class="hljs-regexp">/\bmode\-\w*\b/gi</span>, <span class="hljs-string">''</span> );
+		});
+
+		<span class="hljs-keyword">var</span> tableId = <span class="hljs-keyword">this</span>.$table.attr( <span class="hljs-string">'id'</span> );
+		$( <span class="hljs-built_in">document</span> ).unbind( <span class="hljs-string">"."</span> + tableId );
+		$( <span class="hljs-built_in">window</span> ).unbind( <span class="hljs-string">"."</span> + tableId );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>other plugins</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">this</span>.$table.trigger( events.destroy, [ <span class="hljs-keyword">this</span> ] );
+
+		<span class="hljs-keyword">this</span>.$table.removeAttr( <span class="hljs-string">'data-tablesaw-mode'</span> );
+
+		<span class="hljs-keyword">this</span>.$table.removeData( pluginName );
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Collection method.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	$.fn[ pluginName ] = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+		<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.each( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+			<span class="hljs-keyword">var</span> $t = $( <span class="hljs-keyword">this</span> );
+
+			<span class="hljs-keyword">if</span>( $t.data( pluginName ) ){
+				<span class="hljs-keyword">return</span>;
+			}
+
+			<span class="hljs-keyword">var</span> table = <span class="hljs-keyword">new</span> Table( <span class="hljs-keyword">this</span> );
+			$t.data( pluginName, table );
+		});
+	};
+
+	$( <span class="hljs-built_in">document</span> ).on( <span class="hljs-string">"enhance.tablesaw"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> e </span>) </span>{
+		$( e.target ).find( initSelector )[ pluginName ]();
+	});
+
+}( jQuery ));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

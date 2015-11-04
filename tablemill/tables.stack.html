@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>tables.stack.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="DataFrame.html">
+                  DataFrame.js
+                </a>
+              
+                
+                <a class="source" href="tables-init.html">
+                  tables-init.js
+                </a>
+              
+                
+                <a class="source" href="tables.btnmarkup.html">
+                  tables.btnmarkup.js
+                </a>
+              
+                
+                <a class="source" href="tables.columntoggle.html">
+                  tables.columntoggle.js
+                </a>
+              
+                
+                <a class="source" href="tables.html">
+                  tables.js
+                </a>
+              
+                
+                <a class="source" href="tables.minimap.html">
+                  tables.minimap.js
+                </a>
+              
+                
+                <a class="source" href="tables.modeswitch.html">
+                  tables.modeswitch.js
+                </a>
+              
+                
+                <a class="source" href="tables.sortable.html">
+                  tables.sortable.js
+                </a>
+              
+                
+                <a class="source" href="tables.stack.html">
+                  tables.stack.js
+                </a>
+              
+                
+                <a class="source" href="tables.swipetoggle.html">
+                  tables.swipetoggle.js
+                </a>
+              
+                
+                <a class="source" href="types.html">
+                  types.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+                
+                <a class="source" href="ux.html">
+                  ux.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>tables.stack.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*
+* tablesaw: A set of plugins for responsive tables
+* Stack: switches from column layout to rows with inline labels
+* Copyright (c) 2013 Filament Group, Inc.
+* MIT License
+*/</span>
+
+;(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> win, $, undefined </span>)</span>{
+
+	<span class="hljs-keyword">var</span> classes = {
+		stackTable: <span class="hljs-string">'tablesaw-stack'</span>,
+		cellLabels: <span class="hljs-string">'tablesaw-cell-label'</span>,
+		cellContentLabels: <span class="hljs-string">'tablesaw-cell-content'</span>
+	};
+
+	<span class="hljs-keyword">var</span> data = {
+		obj: <span class="hljs-string">'tablesaw-stack'</span>
+	};
+
+	<span class="hljs-keyword">var</span> attrs = {
+		labelless: <span class="hljs-string">'data-tablesaw-no-labels'</span>,
+		hideempty: <span class="hljs-string">'data-tablesaw-hide-empty'</span>
+	};
+
+	<span class="hljs-keyword">var</span> Stack = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> element </span>) </span>{
+
+		<span class="hljs-keyword">this</span>.$table = $( element );
+
+		<span class="hljs-keyword">this</span>.labelless = <span class="hljs-keyword">this</span>.$table.is( <span class="hljs-string">'['</span> + attrs.labelless + <span class="hljs-string">']'</span> );
+		<span class="hljs-keyword">this</span>.hideempty = <span class="hljs-keyword">this</span>.$table.is( <span class="hljs-string">'['</span> + attrs.hideempty + <span class="hljs-string">']'</span> );
+
+		<span class="hljs-keyword">if</span>( !<span class="hljs-keyword">this</span>.labelless ) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>allHeaders references headers, plus all THs in the thead, which may include several rows, or not</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">this</span>.allHeaders = <span class="hljs-keyword">this</span>.$table.find( <span class="hljs-string">"th"</span> );
+		}
+
+		<span class="hljs-keyword">this</span>.$table.data( data.obj, <span class="hljs-keyword">this</span> );
+	};
+
+	Stack.prototype.init = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> colstart </span>) </span>{
+		<span class="hljs-keyword">this</span>.$table.addClass( classes.stackTable );
+
+		<span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.labelless ) {
+			<span class="hljs-keyword">return</span>;
+		}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>get headers in reverse order so that top-level headers are appended last</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">var</span> reverseHeaders = $( <span class="hljs-keyword">this</span>.allHeaders );
+		<span class="hljs-keyword">var</span> hideempty = <span class="hljs-keyword">this</span>.hideempty;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>create the hide/show toggles</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		reverseHeaders.each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+			<span class="hljs-keyword">var</span> $t = $( <span class="hljs-keyword">this</span> ),
+				$cells = $( <span class="hljs-keyword">this</span>.cells ).filter(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+					<span class="hljs-keyword">return</span> !$( <span class="hljs-keyword">this</span> ).parent().is( <span class="hljs-string">"["</span> + attrs.labelless + <span class="hljs-string">"]"</span> ) &amp;&amp; ( !hideempty || !$( <span class="hljs-keyword">this</span> ).is( <span class="hljs-string">":empty"</span> ) );
+				}),
+				hierarchyClass = $cells.not( <span class="hljs-keyword">this</span> ).filter( <span class="hljs-string">"thead th"</span> ).length &amp;&amp; <span class="hljs-string">" tablesaw-cell-label-top"</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>TODO reduce coupling with sortable</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				$sortableButton = $t.find( <span class="hljs-string">".tablesaw-sortable-btn"</span> ),
+				html = $sortableButton.length ? $sortableButton.html() : $t.html();
+
+			<span class="hljs-keyword">if</span>( html !== <span class="hljs-string">""</span> ){
+				<span class="hljs-keyword">if</span>( hierarchyClass ){
+					<span class="hljs-keyword">var</span> iteration = <span class="hljs-built_in">parseInt</span>( $( <span class="hljs-keyword">this</span> ).attr( <span class="hljs-string">"colspan"</span> ), <span class="hljs-number">10</span> ),
+						filter = <span class="hljs-string">""</span>;
+
+					<span class="hljs-keyword">if</span>( iteration ){
+						filter = <span class="hljs-string">"td:nth-child("</span>+ iteration +<span class="hljs-string">"n + "</span> + ( colstart ) +<span class="hljs-string">")"</span>;
+					}
+					$cells.filter( filter ).prepend( <span class="hljs-string">"&lt;b class='"</span> + classes.cellLabels + hierarchyClass + <span class="hljs-string">"'&gt;"</span> + html + <span class="hljs-string">"&lt;/b&gt;"</span>  );
+				} <span class="hljs-keyword">else</span> {
+					$cells.wrapInner( <span class="hljs-string">"&lt;span class='"</span> + classes.cellContentLabels + <span class="hljs-string">"'&gt;&lt;/span&gt;"</span> );
+					$cells.prepend( <span class="hljs-string">"&lt;b class='"</span> + classes.cellLabels + <span class="hljs-string">"'&gt;"</span> + html + <span class="hljs-string">"&lt;/b&gt;"</span>  );
+				}
+			}
+		});
+	};
+
+	Stack.prototype.destroy = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+		<span class="hljs-keyword">this</span>.$table.removeClass( classes.stackTable );
+		<span class="hljs-keyword">this</span>.$table.find( <span class="hljs-string">'.'</span> + classes.cellLabels ).remove();
+		<span class="hljs-keyword">this</span>.$table.find( <span class="hljs-string">'.'</span> + classes.cellContentLabels ).each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+			$( <span class="hljs-keyword">this</span> ).replaceWith( <span class="hljs-keyword">this</span>.childNodes );
+		});
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>on tablecreate, init</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	$( <span class="hljs-built_in">document</span> ).on( <span class="hljs-string">"tablesawcreate"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> e, Tablesaw, colstart </span>)</span>{
+		<span class="hljs-keyword">if</span>( Tablesaw.mode === <span class="hljs-string">'stack'</span> ){
+			<span class="hljs-keyword">var</span> table = <span class="hljs-keyword">new</span> Stack( Tablesaw.table );
+			table.init( colstart );
+		}
+
+	} );
+
+	$( <span class="hljs-built_in">document</span> ).on( <span class="hljs-string">"tablesawdestroy"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> e, Tablesaw </span>)</span>{
+
+		<span class="hljs-keyword">if</span>( Tablesaw.mode === <span class="hljs-string">'stack'</span> ){
+			$( Tablesaw.table ).data( data.obj ).destroy();
+		}
+
+	} );
+
+}( <span class="hljs-keyword">this</span>, jQuery ));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

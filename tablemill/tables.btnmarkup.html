@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>tables.btnmarkup.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="DataFrame.html">
+                  DataFrame.js
+                </a>
+              
+                
+                <a class="source" href="tables-init.html">
+                  tables-init.js
+                </a>
+              
+                
+                <a class="source" href="tables.btnmarkup.html">
+                  tables.btnmarkup.js
+                </a>
+              
+                
+                <a class="source" href="tables.columntoggle.html">
+                  tables.columntoggle.js
+                </a>
+              
+                
+                <a class="source" href="tables.html">
+                  tables.js
+                </a>
+              
+                
+                <a class="source" href="tables.minimap.html">
+                  tables.minimap.js
+                </a>
+              
+                
+                <a class="source" href="tables.modeswitch.html">
+                  tables.modeswitch.js
+                </a>
+              
+                
+                <a class="source" href="tables.sortable.html">
+                  tables.sortable.js
+                </a>
+              
+                
+                <a class="source" href="tables.stack.html">
+                  tables.stack.js
+                </a>
+              
+                
+                <a class="source" href="tables.swipetoggle.html">
+                  tables.swipetoggle.js
+                </a>
+              
+                
+                <a class="source" href="types.html">
+                  types.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+                
+                <a class="source" href="ux.html">
+                  ux.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>tables.btnmarkup.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*
+* tablesaw: A set of plugins for responsive tables
+* Button component
+* Copyright (c) 2013 Filament Group, Inc.
+* MIT License
+*/</span>
+
+;(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> $ </span>) </span>{
+	<span class="hljs-keyword">var</span> pluginName = <span class="hljs-string">"tablesawbtn"</span>,
+		initSelector = <span class="hljs-string">".btn"</span>,
+		methods = {
+			_create: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+				<span class="hljs-keyword">return</span> $( <span class="hljs-keyword">this</span> ).each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+					$( <span class="hljs-keyword">this</span> )
+						.trigger( <span class="hljs-string">"beforecreate."</span> + pluginName )
+						[ pluginName ]( <span class="hljs-string">"_init"</span> )
+						.trigger( <span class="hljs-string">"create."</span> + pluginName );
+				});
+			},
+			_init: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+				<span class="hljs-keyword">var</span> oEl = $( <span class="hljs-keyword">this</span> ),
+					sel = <span class="hljs-keyword">this</span>.getElementsByTagName( <span class="hljs-string">"select"</span> )[ <span class="hljs-number">0</span> ];
+
+				<span class="hljs-keyword">if</span>( sel ) {
+					$( <span class="hljs-keyword">this</span> )
+						.addClass( <span class="hljs-string">"btn-select"</span> )
+						[ pluginName ]( <span class="hljs-string">"_select"</span>, sel );
+				}
+				<span class="hljs-keyword">return</span> oEl;
+			},
+			_select: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> sel </span>) </span>{
+				<span class="hljs-keyword">var</span> update = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> oEl, sel </span>) </span>{
+					<span class="hljs-keyword">var</span> opts = $( sel ).find( <span class="hljs-string">"option"</span> ),
+						label, el, children;
+
+					opts.each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+						<span class="hljs-keyword">var</span> opt = <span class="hljs-keyword">this</span>;
+						<span class="hljs-keyword">if</span>( opt.selected ) {
+							label = <span class="hljs-built_in">document</span>.createTextNode( opt.text );
+						}
+					});
+
+					children = oEl.childNodes;
+					<span class="hljs-keyword">if</span>( opts.length &gt; <span class="hljs-number">0</span> ){
+						<span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, l = children.length; i &lt; l; i++ ) {
+							el = children[ i ];
+
+							<span class="hljs-keyword">if</span>( el &amp;&amp; el.nodeType === <span class="hljs-number">3</span> ) {
+								oEl.replaceChild( label, el );
+							}
+						}
+					}
+				};
+
+				update( <span class="hljs-keyword">this</span>, sel );
+				$( <span class="hljs-keyword">this</span> ).bind( <span class="hljs-string">"change refresh"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+					update( <span class="hljs-keyword">this</span>, sel );
+				});
+			}
+		};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Collection method.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	$.fn[ pluginName ] = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> arrg, a, b, c </span>) </span>{
+		<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>if it’s a method</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span>( arrg &amp;&amp; <span class="hljs-keyword">typeof</span>( arrg ) === <span class="hljs-string">"string"</span> ){
+			<span class="hljs-keyword">return</span> $.fn[ pluginName ].prototype[ arrg ].call( <span class="hljs-keyword">this</span>, a, b, c );
+		}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>don’t re-init</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span>( $( <span class="hljs-keyword">this</span> ).data( pluginName + <span class="hljs-string">"active"</span> ) ){
+			<span class="hljs-keyword">return</span> $( <span class="hljs-keyword">this</span> );
+		}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>otherwise, init</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+		$( <span class="hljs-keyword">this</span> ).data( pluginName + <span class="hljs-string">"active"</span>, <span class="hljs-literal">true</span> );
+			$.fn[ pluginName ].prototype._create.call( <span class="hljs-keyword">this</span> );
+		});
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>add methods</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	$.extend( $.fn[ pluginName ].prototype, methods );
+
+	$( <span class="hljs-built_in">document</span> ).on( <span class="hljs-string">"enhance"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> e </span>) </span>{
+		$( initSelector, e.target )[ pluginName ]();
+	});
+
+}( jQuery ));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

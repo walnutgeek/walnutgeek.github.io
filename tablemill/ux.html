@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>ux.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="DataFrame.html">
+                  DataFrame.js
+                </a>
+              
+                
+                <a class="source" href="tables-init.html">
+                  tables-init.js
+                </a>
+              
+                
+                <a class="source" href="tables.btnmarkup.html">
+                  tables.btnmarkup.js
+                </a>
+              
+                
+                <a class="source" href="tables.columntoggle.html">
+                  tables.columntoggle.js
+                </a>
+              
+                
+                <a class="source" href="tables.html">
+                  tables.js
+                </a>
+              
+                
+                <a class="source" href="tables.minimap.html">
+                  tables.minimap.js
+                </a>
+              
+                
+                <a class="source" href="tables.modeswitch.html">
+                  tables.modeswitch.js
+                </a>
+              
+                
+                <a class="source" href="tables.sortable.html">
+                  tables.sortable.js
+                </a>
+              
+                
+                <a class="source" href="tables.stack.html">
+                  tables.stack.js
+                </a>
+              
+                
+                <a class="source" href="tables.swipetoggle.html">
+                  tables.swipetoggle.js
+                </a>
+              
+                
+                <a class="source" href="types.html">
+                  types.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+                
+                <a class="source" href="ux.html">
+                  ux.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>ux.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-comment">/*global $ */</span>
+<span class="hljs-comment">/*global jsyaml */</span>
+<span class="hljs-comment">/*global tablemill */</span>
+(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">var</span> x$  = {};
+  <span class="hljs-keyword">var</span> u$ = tablemill.utils;
+  tablemill.ux = x$;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p><strong> tag_appender ( $parent, tag_name, extractor_fn_or_name, text_or_html) </strong></p>
+<p>returns function that could be supplied  to <code>Array.forEach()</code> to create
+multiple html tags for each element in array. All tags created with <code>tag_name</code>
+and appended to <code>$parent</code>.</p>
+<p><code>extractor_fn_or_name(data,$elem)</code> could return text content and it will be placed into
+<code>$elem</code> as text on html (see <code>text_or_html</code> - ‘text’ is assumed by default ). If jQuery
+object returned it will be appended to <code>$elem</code>. If empty value is returned no modification
+to <code>$elem</code> will be done, but it my be useful if <code>extractor_fn_or_name(data,$elem)</code> call
+modify <code>$elem</code> itself.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+  x$.tag_appender = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"> $parent, tag_name, extractor_fn_or_name, text_or_html</span>)</span>{
+    text_or_html = text_or_html || <span class="hljs-string">'text'</span>;
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) </span>{
+      <span class="hljs-keyword">var</span> $elem = $(<span class="hljs-string">'&lt;'</span> + tag_name + <span class="hljs-string">'&gt;&lt;/'</span> + tag_name + <span class="hljs-string">'&gt;'</span>);
+      <span class="hljs-keyword">var</span> value = d;
+      <span class="hljs-keyword">if</span> (extractor_fn_or_name) {
+        <span class="hljs-keyword">if</span> (u$.isFunction(extractor_fn_or_name)) {
+          value = extractor_fn_or_name(d,$elem);
+        } <span class="hljs-keyword">else</span> {
+          value = d[extractor_fn_or_name];
+        }
+      }
+      <span class="hljs-keyword">if</span>( !u$.isNullish(value) &amp;&amp; u$ !== <span class="hljs-string">""</span>) {
+        <span class="hljs-keyword">if</span> (value <span class="hljs-keyword">instanceof</span> jQuery) {
+          $elem.append(value);
+        } <span class="hljs-keyword">else</span> {
+          $elem[text_or_html](value);
+        }
+      }
+      $parent.append($elem);
+    };
+  };
+
+  x$.yesterday = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">yesterday</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-keyword">var</span> dateObj = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>();
+    <span class="hljs-keyword">do</span>{
+      dateObj.setDate(dateObj.getDate()-<span class="hljs-number">1</span>);
+    }<span class="hljs-keyword">while</span>([<span class="hljs-number">0</span>,<span class="hljs-number">6</span>].indexOf(dateObj.getDay()) &gt; -<span class="hljs-number">1</span>) ; <span class="hljs-comment">// skip weekends</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-string">''</span>+ (dateObj.getMonth() + <span class="hljs-number">1</span>)+<span class="hljs-string">'/'</span>+ dateObj.getDate()+<span class="hljs-string">'/'</span>+dateObj.getFullYear();
+  };
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">buildColumn</span>(<span class="hljs-params">i</span>)</span>{
+      <span class="hljs-keyword">var</span> column = $(<span class="hljs-string">'&lt;div class="col-md-3 col-sm-6 col-xs-12"&gt;&lt;/div&gt;'</span>);
+      column.id = <span class="hljs-string">"col"</span> + i ; 
+      <span class="hljs-keyword">return</span> column;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Base</span>(<span class="hljs-params">opt</span>)</span>{
+    <span class="hljs-keyword">this</span>.opt = opt;
+    <span class="hljs-keyword">this</span>.opt_key = opt.key || opt.name.replace(<span class="hljs-regexp">/ /g</span>,<span class="hljs-string">""</span>) ;
+    <span class="hljs-keyword">this</span>.appendTo = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">node</span>)</span>{
+      <span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.inp != <span class="hljs-literal">null</span> ){
+        <span class="hljs-keyword">this</span>.fg.append(<span class="hljs-keyword">this</span>.inp);
+        <span class="hljs-keyword">this</span>.inp = <span class="hljs-literal">null</span>;  
+      } 
+      node.append(<span class="hljs-keyword">this</span>.fg);
+    };
+    <span class="hljs-keyword">var</span> selector = <span class="hljs-string">'#'</span>+<span class="hljs-keyword">this</span>.opt_key;
+    <span class="hljs-keyword">this</span>.value = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{ <span class="hljs-keyword">return</span> $(selector).val(); };
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Input</span>(<span class="hljs-params">opt</span>)</span>{
+    Base.call(<span class="hljs-keyword">this</span>,opt);
+    <span class="hljs-keyword">this</span>.fg = $(<span class="hljs-string">'&lt;div class="form-group"&gt;&lt;label class="input-label" for="'</span>+<span class="hljs-keyword">this</span>.opt_key+<span class="hljs-string">'"&gt;'</span>+<span class="hljs-keyword">this</span>.opt.name+<span class="hljs-string">' &lt;/label&gt;&lt;/div&gt;'</span>);
+    <span class="hljs-keyword">this</span>.inp =$(<span class="hljs-string">'&lt;input class="form-control input-sm" id="'</span>+<span class="hljs-keyword">this</span>.opt_key+<span class="hljs-string">'" name="'</span>+<span class="hljs-keyword">this</span>.opt_key+<span class="hljs-string">'"&gt;'</span>);
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.opt.placeholder != <span class="hljs-literal">null</span>){
+      <span class="hljs-keyword">this</span>.inp.attr(<span class="hljs-string">'placeholder'</span>,<span class="hljs-keyword">this</span>.opt.placeholder);
+    }   
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.opt.default_value != <span class="hljs-literal">null</span>){
+      <span class="hljs-keyword">this</span>.inp.val(<span class="hljs-keyword">this</span>.opt.default_value);
+    }   
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">name2id</span>(<span class="hljs-params">s</span>)</span>{
+    <span class="hljs-keyword">return</span> s.replace(<span class="hljs-regexp">/ /g</span>,<span class="hljs-string">"_"</span>).toUpperCase();
+  }
+  
+  x$.types = {
+    <span class="hljs-built_in">String</span> : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">opt</span>)</span>{
+      Input.call(<span class="hljs-keyword">this</span>,opt);
+      <span class="hljs-keyword">this</span>.inp.attr(<span class="hljs-string">'type'</span>,<span class="hljs-string">'text'</span>);
+    },
+    Double : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">opt</span>)</span>{
+      Input.call(<span class="hljs-keyword">this</span>,opt);
+      <span class="hljs-keyword">this</span>.inp.attr(<span class="hljs-string">'type'</span>,<span class="hljs-string">'number'</span>);
+      <span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.opt.step != <span class="hljs-literal">null</span>){
+        <span class="hljs-keyword">this</span>.inp.attr(<span class="hljs-string">'step'</span>, <span class="hljs-keyword">this</span>.opt.step);
+      }
+    },
+    Enum : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">opt</span>)</span>{
+      Input.call(<span class="hljs-keyword">this</span>,opt);
+      <span class="hljs-keyword">var</span> div = $(<span class="hljs-string">'&lt;div class="btn-group btn-group-xs" role="group" id="'</span>+<span class="hljs-keyword">this</span>.opt_key+<span class="hljs-string">'" aria-label="'</span>+<span class="hljs-keyword">this</span>.opt_key+<span class="hljs-string">'" &gt;&lt;/div&gt;'</span>);
+      <span class="hljs-keyword">var</span> div_id = <span class="hljs-keyword">this</span>.opt_key;
+      <span class="hljs-keyword">this</span>.inp = div;
+      <span class="hljs-keyword">this</span>.opt.choices.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">choice</span>)</span>{
+        <span class="hljs-keyword">var</span> choice_key = name2id(choice);
+        <span class="hljs-keyword">var</span> entry = $(<span class="hljs-string">'&lt;button type="button" id="'</span>+choice_key+<span class="hljs-string">'" class="btn btn-default"&gt;'</span>+choice+<span class="hljs-string">'&lt;/button&gt;'</span>);
+        entry.on(<span class="hljs-string">'click'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+          $(<span class="hljs-string">'#'</span>+div_id + <span class="hljs-string">' button'</span>).each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_,b</span>)</span>{
+            $(b).removeClass( b.id === choice_key ? <span class="hljs-string">"btn-default"</span> : <span class="hljs-string">"btn-primary"</span> );
+            $(b).addClass( b.id === choice_key ? <span class="hljs-string">"btn-primary"</span> : <span class="hljs-string">"btn-default"</span> );
+          });
+          $(<span class="hljs-string">'#'</span>+div_id).val(choice_key);
+        });
+        div.append(entry);
+      });
+    },
+    <span class="hljs-built_in">Boolean</span> : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">opt</span>)</span>{
+      Base.call(<span class="hljs-keyword">this</span>,opt);
+      <span class="hljs-keyword">var</span> checked = <span class="hljs-keyword">this</span>.opt.default_value ? <span class="hljs-string">' checked'</span>:<span class="hljs-string">''</span>;
+      <span class="hljs-keyword">this</span>.fg = $(<span class="hljs-string">'&lt;div class="checkbox"&gt;&lt;label&gt;&lt;input type="checkbox" id="'</span>+<span class="hljs-keyword">this</span>.opt_key +<span class="hljs-string">'" name="'</span>+<span class="hljs-keyword">this</span>.opt_key +<span class="hljs-string">'"'</span>+ checked+<span class="hljs-string">'&gt;'</span>+<span class="hljs-keyword">this</span>.opt.name+<span class="hljs-string">'&lt;/label&gt;&lt;/div&gt;'</span>);   
+      <span class="hljs-keyword">var</span> selector = <span class="hljs-string">'#'</span>+<span class="hljs-keyword">this</span>.opt_key;
+      <span class="hljs-keyword">this</span>.value=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{ <span class="hljs-keyword">return</span> $(selector).is(<span class="hljs-string">':checked'</span>); };
+    },
+    <span class="hljs-built_in">Map</span> : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">opt</span>)</span>{
+      Input.call(<span class="hljs-keyword">this</span>,opt);
+      <span class="hljs-keyword">this</span>.inp = $(<span class="hljs-string">'&lt;select class="form-control" name="'</span>+<span class="hljs-keyword">this</span>.opt_key+<span class="hljs-string">'" id="'</span>+<span class="hljs-keyword">this</span>.opt_key+<span class="hljs-string">'" multiple&gt; &lt;/select&gt;'</span>);
+      <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> name <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>.opt.default_value){
+        <span class="hljs-keyword">this</span>.inp.append($(<span class="hljs-string">'&lt;option value="'</span>+name+<span class="hljs-string">'"'</span>+(<span class="hljs-keyword">this</span>.opt.default_value[name] ? <span class="hljs-string">' selected'</span> : <span class="hljs-string">''</span>)+<span class="hljs-string">'&gt;'</span>+name+<span class="hljs-string">'&lt;/option&gt;'</span>));
+      }
+    },
+  };
+  
+  x$.init=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">selector,url</span>)</span>{
+    <span class="hljs-keyword">if</span>( !url ){
+      url = <span class="hljs-string">'/.d2ux.yaml'</span>;
+    }
+    $.ajax({url:url,type:<span class="hljs-string">'text'</span>,success: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>)</span>{
+      x$.config = jsyaml.load(data);
+      x$.append_form(selector);
+    }});
+  };
+
+  x$.append_form = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">selector</span>)</span>{
+    <span class="hljs-keyword">var</span> form = $(<span class="hljs-string">'&lt;form&gt;&lt;/form&gt;'</span>);
+    <span class="hljs-keyword">var</span> column = buildColumn(<span class="hljs-number">0</span>);
+    <span class="hljs-keyword">var</span> state = [];
+    x$.state = state;
+    <span class="hljs-keyword">var</span> sections = x$.config.root.sections;
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i <span class="hljs-keyword">in</span> sections){
+      <span class="hljs-keyword">var</span> sec = sections[i];
+      state[i] = [];
+      <span class="hljs-keyword">if</span>( sec.column !== <span class="hljs-literal">null</span> &amp;&amp; (<span class="hljs-string">"col"</span> + sec.column) !== column.id ){
+        form.append(column);
+        <span class="hljs-keyword">if</span>(sec.column % <span class="hljs-number">2</span> === <span class="hljs-number">0</span>){
+          form.append($(<span class="hljs-string">'&lt;div class="clearfix visible-sm"&gt;&lt;/div&gt;'</span>));
+        }
+        column = buildColumn(sec.column);
+      }
+      <span class="hljs-keyword">var</span> section_e = $(<span class="hljs-string">'&lt;section&gt;&lt;/section&gt;'</span>);
+      section_e.id = sec.key || sec.section;
+      section_e.append($(<span class="hljs-string">'&lt;h3&gt;&lt;/h3&gt;'</span>).html(sec.section));
+      <span class="hljs-keyword">if</span>( sec.options ){
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> j <span class="hljs-keyword">in</span> sec.options){
+          <span class="hljs-keyword">var</span> opt = sec.options[j];
+          <span class="hljs-keyword">var</span> inp_state = <span class="hljs-keyword">new</span> x$.types[opt.type](opt);
+          state[i][j] = inp_state;
+          inp_state.appendTo(section_e);
+        }
+        column.append(section_e);
+      }
+    }
+    form.append(column);
+    $(selector).append(form);
+  };
+
+  x$.quote = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">v</span>)</span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'"'</span>+v+<span class="hljs-string">'"'</span>;
+  };
+  
+
+  <span class="hljs-keyword">var</span> dir1 =
+    {
+    <span class="hljs-string">"data"</span>: [
+        {<span class="hljs-string">"updated"</span>: <span class="hljs-string">"2015-08-19T13:30:53"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">".bashrc"</span>, <span class="hljs-string">"ext"</span>: <span class="hljs-literal">null</span>, <span class="hljs-string">"path"</span>: <span class="hljs-string">".bashrc"</span>, <span class="hljs-string">"type"</span>: <span class="hljs-string">"UNKNOWN"</span>, <span class="hljs-string">"size"</span>: <span class="hljs-number">1</span>},
+        {<span class="hljs-string">"updated"</span>: <span class="hljs-string">"2015-08-19T13:09:19"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">".d2ux.db"</span>, <span class="hljs-string">"ext"</span>: <span class="hljs-string">"db"</span>, <span class="hljs-string">"path"</span>: <span class="hljs-string">".d2ux.db"</span>, <span class="hljs-string">"type"</span>: <span class="hljs-string">"DB"</span>, <span class="hljs-string">"size"</span>: <span class="hljs-number">3072</span>},
+        {<span class="hljs-string">"updated"</span>: <span class="hljs-string">"2015-08-19T13:30:13"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">".DS_Store"</span>, <span class="hljs-string">"ext"</span>: <span class="hljs-literal">null</span>, <span class="hljs-string">"path"</span>: <span class="hljs-string">".DS_Store"</span>, <span class="hljs-string">"type"</span>: <span class="hljs-string">"UNKNOWN"</span>, <span class="hljs-string">"size"</span>: <span class="hljs-number">6148</span>},
+        {<span class="hljs-string">"updated"</span>: <span class="hljs-string">"2015-08-18T12:54:23"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"debug.log"</span>, <span class="hljs-string">"ext"</span>: <span class="hljs-string">"log"</span>, <span class="hljs-string">"path"</span>: <span class="hljs-string">"debug.log"</span>, <span class="hljs-string">"type"</span>: <span class="hljs-string">"LOG"</span>, <span class="hljs-string">"size"</span>: <span class="hljs-number">2338</span>},
+        {<span class="hljs-string">"updated"</span>: <span class="hljs-string">"2015-08-19T13:30:10"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"fold"</span>, <span class="hljs-string">"ext"</span>: <span class="hljs-literal">null</span>, <span class="hljs-string">"path"</span>: <span class="hljs-string">"fold/"</span>, <span class="hljs-string">"type"</span>: <span class="hljs-string">"DIR"</span>, <span class="hljs-string">"size"</span>: <span class="hljs-number">0</span>},
+        {<span class="hljs-string">"updated"</span>: <span class="hljs-string">"2015-08-20T16:43:51"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"fold.ext"</span>, <span class="hljs-string">"ext"</span>: <span class="hljs-literal">null</span>, <span class="hljs-string">"path"</span>: <span class="hljs-string">"fold.ext/"</span>, <span class="hljs-string">"type"</span>: <span class="hljs-string">"DIR"</span>, <span class="hljs-string">"size"</span>: <span class="hljs-number">0</span>},
+        {<span class="hljs-string">"updated"</span>: <span class="hljs-string">"2015-08-18T13:10:18"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"TWTR.csv"</span>, <span class="hljs-string">"ext"</span>: <span class="hljs-string">"csv"</span>, <span class="hljs-string">"path"</span>: <span class="hljs-string">"TWTR.csv"</span>, <span class="hljs-string">"type"</span>: <span class="hljs-string">"CSV"</span>, <span class="hljs-string">"size"</span>: <span class="hljs-number">28544</span>}
+        ],
+    <span class="hljs-string">"columns"</span>: [
+        {<span class="hljs-string">"link"</span>: <span class="hljs-string">"path"</span>, <span class="hljs-string">"type"</span>: <span class="hljs-string">"STR"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"name"</span>},
+        {<span class="hljs-string">"type"</span>: <span class="hljs-string">"STR"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"path"</span>, <span class="hljs-string">"display"</span>: <span class="hljs-literal">false</span>},
+        {<span class="hljs-string">"type"</span>: <span class="hljs-string">"INT"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"size"</span>},
+        {<span class="hljs-string">"type"</span>: <span class="hljs-string">"DATE"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"updated"</span>},
+        {<span class="hljs-string">"type"</span>: <span class="hljs-string">"STR"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"type"</span>},
+        {<span class="hljs-string">"type"</span>: <span class="hljs-string">"STR"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"ext"</span>, <span class="hljs-string">"display"</span>: <span class="hljs-literal">false</span>}
+    ]
+  };
+
+
+  <span class="hljs-keyword">var</span> dir2 = {
+      <span class="hljs-string">"data"</span>: [
+           {<span class="hljs-string">"updated"</span>: <span class="hljs-string">"2015-08-20T16:43:51"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"abc.json"</span>, <span class="hljs-string">"ext"</span>: <span class="hljs-string">"json"</span>, <span class="hljs-string">"path"</span>: <span class="hljs-string">"fold.ext/abc.json"</span>, <span class="hljs-string">"type"</span>: <span class="hljs-literal">null</span>, <span class="hljs-string">"size"</span>: <span class="hljs-number">0</span>}
+       ],
+       <span class="hljs-string">"cols"</span>: [
+           {<span class="hljs-string">"link"</span>: <span class="hljs-string">"path"</span>, <span class="hljs-string">"type"</span>: <span class="hljs-string">"STR"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"name"</span>},
+           {<span class="hljs-string">"type"</span>: <span class="hljs-string">"STR"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"path"</span>, <span class="hljs-string">"display"</span>: <span class="hljs-literal">false</span>},
+           {<span class="hljs-string">"type"</span>: <span class="hljs-string">"INT"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"size"</span>},
+           {<span class="hljs-string">"type"</span>: <span class="hljs-string">"DATE"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"updated"</span>},
+           {<span class="hljs-string">"type"</span>: <span class="hljs-string">"STR"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"type"</span>},
+           {<span class="hljs-string">"type"</span>: <span class="hljs-string">"STR"</span>, <span class="hljs-string">"name"</span>: <span class="hljs-string">"ext"</span>, <span class="hljs-string">"display"</span>: <span class="hljs-literal">false</span>}
+       ]
+  };
+  <span class="hljs-keyword">var</span> links = [
+         { <span class="hljs-string">"path"</span>: <span class="hljs-string">"home/"</span>,
+           <span class="hljs-string">"name"</span>: <span class="hljs-string">"Home"</span> },
+         { <span class="hljs-string">"path"</span>: <span class="hljs-string">"home/abc/"</span>,
+           <span class="hljs-string">"name"</span>: <span class="hljs-string">"abc"</span> },
+         { <span class="hljs-string">"dropdown"</span>: [
+            { <span class="hljs-string">"path"</span>: <span class="hljs-string">"home/abc/c.md"</span>,
+            <span class="hljs-string">"name"</span>: <span class="hljs-string">"c.md"</span> },
+            { <span class="hljs-string">"path"</span>: <span class="hljs-string">"home/abc/x.csv"</span>,
+            <span class="hljs-string">"name"</span>: <span class="hljs-string">"x.csv"</span> },
+            { <span class="hljs-string">"path"</span>: <span class="hljs-string">"home/abc/x.json"</span>,
+                <span class="hljs-string">"name"</span>: <span class="hljs-string">"x.json"</span> },
+           ],
+           <span class="hljs-string">"path"</span>: <span class="hljs-string">"home/abc/hyz.md"</span>,
+           <span class="hljs-string">"name"</span>: <span class="hljs-string">"hyz.md"</span> },
+       ];
+
+  x$.abc = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">i</span>)</span>{
+      <span class="hljs-keyword">switch</span>(i){
+      <span class="hljs-keyword">case</span> <span class="hljs-number">0</span>:
+          <span class="hljs-keyword">return</span> links;
+      <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:
+          <span class="hljs-keyword">return</span> dir1;
+      <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:
+          <span class="hljs-keyword">return</span> dir2;
+      }
+  };
+
+  <span class="hljs-keyword">var</span> grid;
+  <span class="hljs-keyword">var</span> options = {
+          enableCellNavigation : <span class="hljs-literal">true</span>,
+          enableColumnReorder : <span class="hljs-literal">false</span>,
+          forceFitColumns: <span class="hljs-literal">true</span>
+        };
+
+  x$.build_table = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>)</span>{
+      grid = <span class="hljs-keyword">new</span> x$.Grid(<span class="hljs-string">"#grid"</span>, data.data, data.columns.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">r</span>)</span>{
+          <span class="hljs-keyword">return</span> r.display === <span class="hljs-literal">false</span> ? <span class="hljs-literal">null</span> : {id: r.name, name: r.name, field: r.name  ,sortable: <span class="hljs-literal">true</span> };
+      }).filter(x$.utils.isNotNull), options);
+      grid.setSelectionModel(<span class="hljs-keyword">new</span> x$.RowSelectionModel({
+        selectActiveRow : <span class="hljs-literal">true</span>
+      }));
+  };
+  x$.update_breadcrumbs=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">lis</span>)</span>{
+      <span class="hljs-keyword">var</span> bc = $(<span class="hljs-string">'.breadcrumb'</span>);
+      bc.html(<span class="hljs-string">''</span>);
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">li_link</span>(<span class="hljs-params">li</span>)</span>{
+          <span class="hljs-keyword">return</span> <span class="hljs-string">'&lt;li&gt;&lt;a href="/'</span>+li.path+<span class="hljs-string">'.view"&gt;'</span>+li.name+<span class="hljs-string">'&lt;/a&gt;&lt;/li&gt;'</span>;
+      }
+      <span class="hljs-keyword">for</span> ( <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span> ; i &lt; lis.length ; i++) {
+          <span class="hljs-keyword">var</span> dd = lis[i].dropdown;
+          <span class="hljs-keyword">if</span>( dd == <span class="hljs-literal">null</span>){
+              bc.append(li_link(lis[i]));
+          }<span class="hljs-keyword">else</span>{
+              bc.append(<span class="hljs-string">'&lt;li class="dropdown"&gt;'</span> +
+                  <span class="hljs-string">'&lt;a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"&gt;'</span>+lis[i].name+<span class="hljs-string">'&lt;b class="caret"&gt;&lt;/b&gt;&lt;/a&gt;'</span> +
+                  <span class="hljs-string">'&lt;ul class="dropdown-menu"&gt;'</span> +
+                  dd.map(li_link).join(<span class="hljs-string">''</span>) +<span class="hljs-string">'&lt;/ul&gt;&lt;/li&gt;'</span>);
+          }
+      }
+  };
+
+})();</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
